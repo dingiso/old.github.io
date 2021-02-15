@@ -10,19 +10,21 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="包含在QEMU中如何定制指令和如何进行测试">
+  <meta name="description" content="包含在QEMU中如何定制指令和如何">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在QEMU中定制RISCV指令并测试">
 <meta property="og:url" content="https://dingiso.github.io/2021/02/13/%E5%9C%A8QEMU%E4%B8%AD%E5%AE%9A%E5%88%B6RISCV%E6%8C%87%E4%BB%A4%E5%B9%B6%E6%B5%8B%E8%AF%95/index.html">
 <meta property="og:site_name" content="Dingisoul">
-<meta property="og:description" content="包含在QEMU中如何定制指令和如何进行测试">
+<meta property="og:description" content="包含在QEMU中如何定制指令和如何">
 <meta property="og:locale">
+<meta property="og:image" content="https://github.com/dingiso/dingiso.github.io/tree/main/img/reg_table.png">
 <meta property="article:published_time" content="2021-02-13T04:05:34.000Z">
-<meta property="article:modified_time" content="2021-02-13T11:06:32.784Z">
+<meta property="article:modified_time" content="2021-02-15T15:35:02.212Z">
 <meta property="article:author" content="Dingsoul">
 <meta property="article:tag" content="QEMU">
 <meta property="article:tag" content="RISC-V">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/dingiso/dingiso.github.io/tree/main/img/reg_table.png">
   
     <link rel="alternative" href="/atom.xml" title="Dingisoul" type="application/atom+xml">
   
@@ -250,7 +252,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">9字</span>
+      <span class="post-count">2.2k字</span>
     </span>
   </span>
 
@@ -259,7 +261,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">1分</span>
+      <span class="post-count">9分</span>
     </span>
   </span>
 </div>
@@ -270,7 +272,111 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要是面向</p>
+    <p>本文主要是介绍</p>
+<ol>
+<li>通过QEMU中提供的Decode Tree 的方法定义指令编码</li>
+<li>定义指令的转义和指令的基础逻辑</li>
+<li>利用二进制的方式定义测试程序并测试</li>
+<li>使用 P扩展(Packed SIMD) 作为示例</li>
+</ol>
+<a id="more"></a>
+
+<h3 id="QEMU-下载"><a href="#QEMU-下载" class="headerlink" title="QEMU 下载"></a>QEMU 下载</h3><p>为了更改QEMU的源码，我们需要正确下载源代码并自行进行编译，QEMU提供了两种方式方便我们下载。</p>
+<p>通过 <code>git</code> 的方式下载 QEMU 的<strong>最新</strong>源码 - 该方式可能需要一个稳定的 “科学的” 网络</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://gitlab.com/qemu-project/qemu.git</span><br><span class="line"><span class="built_in">cd</span> qemu</span><br><span class="line">git submodule init</span><br><span class="line">git submodule update --recursive</span><br></pre></td></tr></table></figure>
+<p>同样的，我们可以直接选择下载官网打包好的最新稳定版的QEMU源码，这能让你更稳定，快速的得到代码，但可能不是 git 同步的最新版本 - <a target="_blank" rel="noopener" href="https://download.qemu.org/qemu-5.2.0.tar.xz">QEMU-5.2.0</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://download.qemu.org/qemu-5.2.0.tar.xz</span><br><span class="line">tar xvJf qemu-5.2.0.tar.xz</span><br><span class="line"><span class="built_in">cd</span> qemu-5.2.0</span><br></pre></td></tr></table></figure>
+<p>通过以上方式下载过后，我们可以开始进行指令的添加了</p>
+<h3 id="指令编码-Decode-Tree"><a href="#指令编码-Decode-Tree" class="headerlink" title="指令编码 - Decode Tree"></a>指令编码 - Decode Tree</h3><p>为了方便开发者和编译检查，QEMU 中的指令的二进制指令编码都是以<code>Decode Tree</code> 方式进行定义的，QEMU的内部程序在编译时会将其自动解析为 c 语言。</p>
+<p>特别地，像 RISC-V 这种拥有固定指令格式的 ISA 特别契合 Decode Tree。因为各个指令段都在固定的位置。各个段的重复性要高很多，足以节省很多代码空间</p>
+<p>下面我们已一种最常用的三参数指令的P扩展<code>add16</code>作为例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#！target/riscv/insn*.decode</span></span><br><span class="line"><span class="comment">#        31:25   24:20 19:15 14:12 11:7  6:0</span></span><br><span class="line">add16    0100000 ..... ..... 000   ..... 1110111 @r</span><br><span class="line"><span class="comment">#        funct7  Rs2   Rs1  funct3  Rd   opcode</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 其中用到的各个定义如下</span><br><span class="line"># Formats <span class="number">32</span>:</span><br><span class="line">@r       ....... ..... ..... ...   ..... ....... &amp;r  %rs2 %rs1 %rd</span><br><span class="line"></span><br><span class="line"># Fields:</span><br><span class="line">%rs2       <span class="number">20</span>:<span class="number">5</span></span><br><span class="line">%rs1       <span class="number">15</span>:<span class="number">5</span></span><br><span class="line">%rd        <span class="number">7</span>:<span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>一个指令的定义有以下几个过程</p>
+<ol>
+<li>找到官方文件对于指令编码的定义，将指令名称<code>add16</code>和二进制编码<code>0100000 ..... ..... 000   ..... 1110111</code>填入</li>
+<li>通过指令对于参数的定义，选取合适的<code>Format</code>，例如 <code>@r</code> ，就顺序包含了两个输入寄存器<code>rs1 &amp; rs2</code> 和输出寄存器<code>rd</code></li>
+<li>如果没有，就需要自己定义</li>
+</ol>
+<p>有关decoder tree 的具体内容，接下来的博客可能会进行阐述，</p>
+<p>但是有的 blogs 已经有了详细的阐述，qemu 官方也有，下面给出链接，大家可以参阅</p>
+<p>QEMU官方： <a target="_blank" rel="noopener" href="https://qemu.readthedocs.io/en/latest/devel/decodetree.html">Decode Tree的定义</a></p>
+<p>其他博客的定义：<a target="_blank" rel="noopener" href="https://0xc0de.tw/QEMU-Decodetree-%E8%AA%9E%E6%B3%95%E4%BB%8B%E7%B4%B9-Part-1/">Part-1</a>，<a target="_blank" rel="noopener" href="https://0xc0de.tw/QEMU-Decodetree-%E8%AA%9E%E6%B3%95%E4%BB%8B%E7%B4%B9-Part-2/">Part-2</a></p>
+<h3 id="指令转译-trans"><a href="#指令转译-trans" class="headerlink" title="指令转译 - trans"></a>指令转译 - trans</h3><p>QEMU在执行时，会将 <code>target instructions</code>(e.g. RISC-V instructions) 转译成 <code>TCG ops</code>，而<code>TCG ops</code>则会再转译为<code>host instructions</code>(e.g. x86 instruction)。而<code>trans_add16()</code> 实际执行了 <code>add16</code> 指令对应的 <code>TCG ops</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#！ QEMU dynamic instructions translation</span></span><br><span class="line">+---------------------+      +---------+      +-------------------+</span><br><span class="line">| Target Instructions | ---&gt; | TCG ops | ---&gt; | Host instructions |</span><br><span class="line">+---------------------+      +---------+      +-------------------+</span><br><span class="line">     (e.g. RISC-V)                                  (e.g. x86)</span><br></pre></td></tr></table></figure>
+<p>关于 <code>TCG</code> 的说明，可以参考 <code>QEMU</code> 的 <code>documentations</code> <a target="_blank" rel="noopener" href="https://github.com/qemu/qemu/blob/master/docs/devel/tcg.rst">Translator Internals</a>，<a target="_blank" rel="noopener" href="https://github.com/qemu/qemu/blob/master/tcg/README">TCG Readme</a></p>
+<p>为了方便定义和区分，新建一个文件<code>./target/riscv/insn_trans/trans_rvp.inc.c</code>来定义<code>P Extension</code>指令的<code>trans_xx()</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#！ ./target/riscv/insn_trans/trans_rvb.c.inc</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * RISC-V translation routines for the RVP Standard Extension.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">trans_add16</span><span class="params">(DisasContext *ctx, arg_pcnt *a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (a-&gt;rd != <span class="number">0</span>) &#123;</span><br><span class="line">        TCGv t0 = tcg_temp_new();</span><br><span class="line">        gen_get_gpr(t0, a-&gt;rs1);</span><br><span class="line">        TCGv t1 = tcg_temp_new();</span><br><span class="line">        gen_get_gpr(t1, a-&gt;rs2);</span><br><span class="line">        gen_helper_add16(cpu_gpr[a-&gt;rd], t0, t1);</span><br><span class="line">        tcg_temp_free(t0);</span><br><span class="line">        tcg_temp_free(t1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于对<code>x0</code>(<code>zero register</code>)的写入都会被忽略，因此首先判断<code>rd</code>是否为<strong>0</strong>，若为<strong>0</strong>则不做任何事情</p>
+<p>接着声明两个TCG variable：<code>t0和t1</code>，利用<code>gen_get_gpr()</code>将<code>rs1,rs2</code>寄存器的值存入变量</p>
+<p>利用新声明的变量调用<code>gen_helper_add16()</code>函数转向<code>helper function</code>，该函数计算完成后，会将结果保存在<code>rd</code>(i.e. <code>cpu_gpr[a-&gt;rd]</code>)寄存器中。</p>
+<p>P.S. 其实这里可以简单的直接将<code>cpu_gpr[a-&gt;rs1]</code>传入，省略TCG variable: <code>t0,t1</code> 的声明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#! ./target/riscv/insn_trans/trans_rvp.c.inc</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * RISC-V translation routines for the RVB Standard Extension.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">trans_add16</span><span class="params">(DisasContext *ctx, arg_pcnt *a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (a-&gt;rd != <span class="number">0</span>) &#123;</span><br><span class="line">        gen_helper_add16(cpu_gpr[a-&gt;rd], cpu_gpr[a-&gt;rs1], cpu_gpr[a-&gt;rs2]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="指令的逻辑-helper-function"><a href="#指令的逻辑-helper-function" class="headerlink" title="指令的逻辑  - helper function"></a>指令的逻辑  - helper function</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_HELPER_2(name, ret, t1, t2) \</span></span><br><span class="line">  DEF_HELPER_FLAGS_2(name, <span class="number">0</span>, ret, t1, t2)</span><br><span class="line"><span class="comment">//DEF_HELPER_FLAGS_2(name,flag,ret,t1,t2)</span></span><br></pre></td></tr></table></figure>
+<p>为了方便QEMU对于helper function的调用和定义，我们需要定义一个函数<code>DEF_HELPER_x = DEF_HELPER_FLAGS_x</code>  对QEMU声明函数的名称和参数, <strong>x</strong>代表该<strong>指令需要的参数</strong>-(自变量），不带 <code>_FLAGS</code> 的函数会利用命令自动将 <strong>FLAGS</strong>参数置为0。</p>
+<ul>
+<li><strong>name</strong> ：指令的名称，连接成 <code>HELPER(name) / helper_name</code> 的形式作为 <strong>helper function</strong></li>
+<li> <strong>flag</strong>    :  函数权限位，TCG调用的权限，全局不读/写，返回值无用，无返回值。<code>tcg.h</code></li>
+<li>  <strong>ret</strong>     :  <code>helper function</code>返回值</li>
+<li> <strong>t1- tn</strong> ：<code>helper function</code>的参数</li>
+</ul>
+<p>ret 和 t1-tn 的类型可以是，</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>tl</td>
+<td>target_ulong - QEMU中保存寄存器值得基本单位</td>
+</tr>
+<tr>
+<td>env</td>
+<td>environment - CPUXXSTATE 保存CPU状态寄存器的值</td>
+</tr>
+<tr>
+<td>i64</td>
+<td>integer-64 - 64位整型可用于浮点数指令</td>
+</tr>
+</tbody></table>
+<p><code>add16</code>的 helper function 定义如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#! ./target/riscv/helper.h</span><br><span class="line"><span class="comment">/* Packed-SIMD Extension */</span></span><br><span class="line">DEF_HELPER_2(add16, tl, tl, tl)</span><br><span class="line">DEF_HELPER_FLAGS_3(add16, <span class="number">0</span>, tl, tl, tl)</span><br></pre></td></tr></table></figure>
+<p>两种定义意义相同</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#! ./target/riscv/bitmanip_helper.c</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * RISC-V P Extension Helpers for QEMU.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;qemu/osdep.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;cpu.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;exec/exec-all.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;exec/helper-proto.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> u16p uint16_t *</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(TARGET_RISCV32)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">uint32_t</span> LC_16BIT = <span class="number">2</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">uint32_t</span> LC_16BIT = <span class="number">4</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// target_ulong HELPER(add16)(target_ulong rs1, target_ulong rs2) </span></span><br><span class="line"><span class="function">target_ulong <span class="title">helper_add16</span> <span class="params">(target_ulong rs1, target_ulong rs2)</span> </span>&#123;</span><br><span class="line">    target_ulong rd = <span class="number">0</span>;</span><br><span class="line">    u16p rs1_p = (u16p)&amp;rs1;</span><br><span class="line">    u16p rs2_p = (u16p)&amp;rs2;</span><br><span class="line">    u16p rd_p  = (u16p)&amp;rd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; LC_16BIT; i++)</span><br><span class="line">        rd_p[i] = rs1_p[i] + rs2_p[i];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数就是<code>add16</code>的实际逻辑函数，<code>helper function</code> 接受两个 <code>target_ulong</code> 类型的 <code>rs1&amp;rs2</code>, 并将结果返回，存储在 <code>rd</code> 寄存器</p>
+<p><code>add16</code> 指令的内容，是将寄存器分为多个<strong>16</strong>位数并分别计算，因此我们将<code>rs1/2</code> 变为<strong>16</strong>位的数组(指针)并分别进行加法运算，得到结果然后返回。</p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>为了使指令成功执行，我们还需要填写以下代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#! ./target/riscv/meson.build</span><br><span class="line">riscv_ss.add(files(</span><br><span class="line">  &#x27;psimd_helper.c&#x27;,</span><br><span class="line">))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#! ./target/riscv/translate.c</span><br><span class="line"><span class="comment">/* Include insn module translation function */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;insn_trans/trans_rvp.c.inc&quot;</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="指令的测试"><a href="#指令的测试" class="headerlink" title="指令的测试"></a>指令的测试</h3><p>在我们了解了指令的添加流程后，我们要对添加后的指令进行测试以确保指令的正确性。</p>
+<p>为了成功编译，你需要事先安装<code>riscv64-unknown-elf-gcc</code>来编译测试程序，你可以通过  <a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-gnu-toolchain">riscv-gnu-toolchain</a> 进行编译安装</p>
+<p>下面我将介绍一下QEMU的编译过程，鉴于我们只需要QEMU的用户态测试程序，我们执行以下命令在你保存qemu的文件夹下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">../configure --target-list=riscv64-linux-user</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p><code>build</code> 文件夹用于保存你的编译结果，你也可以自由选择想要保存的文件夹。</p>
+<p>接着我们创建一个 <code>p_test</code> 文件夹保存测试程序并进行测试, 因为原有的工具链并不含有新添加的指令，没办法编译成合适的二进制编码，所以我们使用内联汇编为其提供二进制编码，省去更改工具链的麻烦。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#! ./build/p_test/add16.c</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">__attribute__((noinline))</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mac_asm</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b,<span class="keyword">int</span> c)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">asm</span> __volatile__ (<span class="string">&quot;.word 0x40c58577\n&quot;</span>);</span><br><span class="line">        <span class="keyword">asm</span> __volatile__ (<span class="string">&quot;mv  %0,a0\n&quot;</span></span><br><span class="line">                : <span class="string">&quot;=r&quot;</span>(a)</span><br><span class="line">                :</span><br><span class="line">                :);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;a=%d\n&quot;</span>,a);</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a=<span class="number">5</span>,b=<span class="number">0xFFFEFFFF</span>,c=<span class="number">0xFFFEFFFF</span>;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;add16:=0x%x\n  add:=0x%x\n&quot;</span>,mac_asm(a,b,c),b+c);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>RISC-V</code> 会将函数的参数放入 <code>a0-a7</code> 寄存器中，并将 <code>a0</code> 寄存器中的值返回</p>
+<img src="https://github.com/dingiso/dingiso.github.io/tree/main/img/reg_table.png" />
+
+<p><code>a0-a7</code>  对应 <code>x10-x17</code> 和二进制编码 <code>10-17</code> ， 因此最后的指令编码如下</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Encoding used for &quot;add16 a0, a1, a2&quot;</span></span><br><span class="line"><span class="number">0x40c58577</span> [base <span class="number">16</span>]</span><br><span class="line">==</span><br><span class="line"><span class="comment"># Group by related bit chunks:</span></span><br><span class="line"><span class="number">0100000</span> <span class="number">01100</span> <span class="number">01011</span> <span class="number">000</span> <span class="number">01010</span> <span class="number">1110111</span> [base <span class="number">2</span>]</span><br><span class="line">^       ^     ^     ^   ^     ^</span><br><span class="line"><span class="params">|       |</span>     <span class="params">|     |</span>   <span class="params">|     |</span></span><br><span class="line"><span class="params">|       |</span>     <span class="params">|     |</span>   <span class="params">|     opcode (6..2=0x1D 1..0=3)</span></span><br><span class="line"><span class="params">|</span>       <span class="params">|     |</span>     <span class="params">|   dest (10 : a0)</span></span><br><span class="line"><span class="params">|</span>       <span class="params">|     |</span>     funct3 (<span class="number">14</span>..<span class="number">12</span>=<span class="number">0</span>)</span><br><span class="line"><span class="params">|       |</span>     src1 (<span class="number">11</span> : a1)</span><br><span class="line"><span class="params">|       src2 (12 : a2)</span></span><br><span class="line"><span class="params">funct7 (31..25=0x40)</span></span><br></pre></td></tr></table></figure>
+<p>为了防止在编译过程中，编译器会对寄存器进行优化，将返回值存入其他寄存器，我们使用 <code>mv</code> 指令强制将变量 <code>a</code> 的值赋给 <code>a0</code> 寄存器,这样就能成功将值返回。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">riscv64-unknown-elf-gcc  -o x x.c</span><br><span class="line">../qemu-riscv64 xx</span><br></pre></td></tr></table></figure>
+<p>我们利用以上指令执行，返回正确的结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add16:=0xfffcfffe</span><br><span class="line">  add:=0xfffdfffe</span><br></pre></td></tr></table></figure>
+<p><code>add16</code> 由于每16位进行计算，所以无后<strong>16</strong>位的进位，中间位是<code>c</code>，而<code>add</code>由于有进位，所以是<code>d</code></p>
+<hr>
+<p>在QEMU中定制指令的流程大致如同本文的介绍，但是由于 <code>add16</code> 仅涉及数值的计算，而没有像</p>
+<p><code>csr</code> 相关指令涉及 <code>CPURISCVState</code> 的更新，以及像<code>jal</code>指令涉及<code>DisasContext</code>的判断，因此相对简单，对于其他指令，需要在好好的研究以下</p>
+<blockquote>
+<p>Refrences:</p>
+<p><a target="_blank" rel="noopener" href="https://0xc0de.tw/QEMU-%E4%BD%BF%E7%94%A8-Decodetree-%E6%96%B0%E5%A2%9E-RISC-V-%E6%8C%87%E4%BB%A4/">QEMU-使用 Decodetree新增 RISC-V 指令</a></p>
+<p><a target="_blank" rel="noopener" href="https://quasilyte.dev/blog/post/riscv32-custom-instruction-and-its-simulation/#adding-mac-instruction-to-the-rv32im">RISC-V: custom instruction and its simulation</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-p-spec/blob/master/P-ext-proposal.adoc">riscv-p-spec</a></p>
+</blockquote>
+<p>感谢在学习过程中，老师们的指导，非常感谢！！</p>
 
     
 
