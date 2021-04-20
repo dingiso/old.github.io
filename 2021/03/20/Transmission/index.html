@@ -6,24 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://dingiso.github.io">
-  <title>Dingisoul</title>
+  <title>privacy-preserving deep-learning via weight Transmission | Dingisoul</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-    
-    <!-- <meta name="keywords" content="good">
-    <meta name="description" content="Dingisoul&#39;s blog"> -->
-  
-  <meta name="description" content="Dingisoul&#39;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Dingisoul">
-<meta property="og:url" content="https://dingiso.github.io/page/2/index.html">
+  <meta name="description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="privacy-preserving deep-learning via weight Transmission">
+<meta property="og:url" content="https://dingiso.github.io/2021/03/20/Transmission/index.html">
 <meta property="og:site_name" content="Dingisoul">
-<meta property="og:description" content="Dingisoul&#39;s blog">
+<meta property="og:description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析">
 <meta property="og:locale">
+<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/snt.png">
+<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/fnt.png">
+<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/fig3.jpg">
+<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/table3.jpg">
+<meta property="article:published_time" content="2021-03-20T11:42:37.000Z">
+<meta property="article:modified_time" content="2021-04-20T12:17:49.599Z">
 <meta property="article:author" content="Dingsoul">
-<meta property="article:tag" content="good">
+<meta property="article:tag" content="privacy-preserving">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://dingiso.github.io/.io//03/20/Transmission/snt.png">
   
     <link rel="alternative" href="/atom.xml" title="Dingisoul" type="application/atom+xml">
   
@@ -230,46 +233,231 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-
-  
-    <article id="post-操作系统 期末总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Transmission" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/08/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20%E6%9C%9F%E6%9C%AB%E6%80%BB%E7%BB%93/" target="_blank">操作系统期末总结</a>
-  
+    <h1 class="article-title" itemprop="name">
+      privacy-preserving deep-learning via weight Transmission
     </h1>
   
 
 
   
   
-<a href="/2020/08/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20%E6%9C%9F%E6%9C%AB%E6%80%BB%E7%BB%93/" class="archive-article-date">
-        <time datetime="2020-08-27T09:05:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-27</time>
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
+<a href="/2021/03/20/Transmission/" class="archive-article-date">
+        <time datetime="2021-03-20T11:42:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-20</time>
 </a>
 
   
   
     
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">3.4k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">12分</span>
+    </span>
+  </span>
+</div>
+
 
   
   </header>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p>本文是对操作系统的课程的期末总结的文档-帮助自己了解整体的结构<br><code>reference</code>：mooc 上南京大学 骆斌 老师的PPT</p>
-    
-    <a class="article-more-a" href="/2020/08/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20%E6%9C%9F%E6%9C%AB%E6%80%BB%E7%BB%93/#more">more >></a>
-    
-    
+    <p>本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析</p>
+<a id="more"></a>
+
+<h3 id="论文题目理解"><a href="#论文题目理解" class="headerlink" title="论文题目理解"></a>论文题目理解</h3><p>本文设立了一个能保护隐私的深度学习算法，根据本文的内容，我将原题目《Privacy-Preserving Deep Learning via Weight Transmission》扩展为《Privacy-preserving SGD for distributed trainers via weight transmission》即通过权重传输实现的针对分布式训练者的隐私保护随机梯度下降算法，通过对题目的分析，我们知道本文的书写环境和目的如下：</p>
+<ul>
+<li><p>算法 ：SGD 随机梯度下降</p>
+</li>
+<li><p>目的 ：隐私保护</p>
+</li>
+<li><p>环境 ：分布式神经网路 &amp; 深度学习</p>
+</li>
+</ul>
+<h3 id="论文背景知识"><a href="#论文背景知识" class="headerlink" title="论文背景知识"></a>论文背景知识</h3><h4 id="背景知识一："><a href="#背景知识一：" class="headerlink" title="背景知识一："></a>背景知识一：</h4><p>本文是在SGD随机梯度下降算法的基础上进行改进和扩展的。为了介绍SGD，我们首先介绍一下GD最速梯度下降算法-Gradient Descent，该算法是通过计算给定数据集的导数，使函数不断收敛至J函数-cost function的最小值，得到结果，该方法的具体数学公式为<br>$$<br>x_{t+1} = x_t - \eta_t\nabla f(x_t)<br>$$<br>其中$\eta_t$为步长，  为$\nabla f(x_t)$导数，该方法有两个缺点：</p>
+<ol>
+<li>为了保证准确性$\nabla f(x_t)$需要是一个精确的导数，所以需要进行很多次迭代的运算才能得到结果</li>
+<li>该方法无法逃离鞍点和局部最优点这种导数为0但是不是最小值的点。</li>
+</ol>
+<p>因此我们引入了SGD算法，该算法为随机最速下降算法-Stochastic Gradient Descent。他的主要思想是利用包含噪声的具有随机性的导数使得下降过程不经过鞍点和局部最优点。其中随机导数仅要求期望为单数即可，数学表达为  。该方法的全部数学表达为：<br>$$<br>G_t = \frac{\delta J(W_{t-1},X_t,Y_t)}{\delta W} \\<br>W_t = W_{t-1} - \alpha(t)·G_t<br>$$<br>其中 J 函数为cost function，即对结果优良性的衡量函数，W为权值参数，是每一个属性对结果的权重影响。$\alpha_t$为步长,$G_t$为随机导数。相比于GD，SGD有以下的优良特性：</p>
+<ol>
+<li>导数可以包含噪声，所以算得很快，且大量的理论工作说明，只要噪声不离谱，其实（至少在f是凸函数的情况下），SGD都能够很好地收敛。</li>
+<li>它能够自动逃离鞍点，自动逃离比较差的局部最优点。</li>
+<li>最后找到的答案还具有很强的一般性（generalization），即能够在自己之前没有见过但是服从同样分布的数据集上表现非常好。</li>
+</ol>
+<p>这些优良的性质使得SGD成为深度学习领域较为普遍且优良的算法 ，这也是本文选择这个算法的原因之一。</p>
+<p>本文还有其他有关隐私保护<code>Privacy-preserving</code>的背景知识为：</p>
+<h4 id="Honest-but-Curious"><a href="#Honest-but-Curious" class="headerlink" title="Honest-but-Curious"></a>Honest-but-Curious</h4><p>首先本文假定server是诚实但好奇的(honest-but-curious)，该模型又被称为半诚实模型(semi-Honest model)，其中</p>
+<ul>
+<li>诚实意为结点会诚实的将他的工作全部完成，</li>
+<li>好奇意味着结点在执行过程中会将他所有的数据全部保存下来并在后续时利用他们进行推测攻击。</li>
+</ul>
+<h4 id="Collusion"><a href="#Collusion" class="headerlink" title="Collusion"></a>Collusion</h4><p>相关的，本文假定的攻击还有，trainer和server将会是一伙的，他们之间可以进行共谋(collusion)来对数据进行攻击。</p>
+<h3 id="论文的主要贡献"><a href="#论文的主要贡献" class="headerlink" title="论文的主要贡献"></a>论文的主要贡献</h3><ol>
+<li>舍弃了传统梯度传输的方法而选用权值传输来大幅提高安全性。</li>
+<li>本文使用的方法适用于深度学习适用的所有激活函数，这意味着不会适用近似算法。</li>
+<li>本文通过严格的理论证明诚实但好奇的server和极端共谋，即只有一个trainer可信的情况下，本文的方法依然有极高的安全性。</li>
+<li>通过一个证明表达了本文在准确性方面和将所有数据集集成在一个训练者训练的结果准确性是相同的。</li>
+</ol>
+<h2 id="论文主要内容"><a href="#论文主要内容" class="headerlink" title="论文主要内容"></a>论文主要内容</h2><h3 id="权值传输"><a href="#权值传输" class="headerlink" title="权值传输"></a>权值传输</h3><p>首先，我们要为大家解释一下为什么权值传输相比梯度传输拥有更高的安全性和保护隐私性，本篇文章通过跟之前两篇文章的比较来说明。</p>
+<p>第一篇的主要思想是只传输随机选择的部分梯度而放弃传统的加密方法，尽管在Sec.7 中文章作者又利用了差分隐私增加拉普拉斯噪声的方法，但是数据保密性和差分隐私是正交的，所以仍可能造成泄露。</p>
+<blockquote>
+<p>R. Shokri and V. Shmatikov, “Privacy-preserving deep learning,” in Proc. 22nd ACM SIGSAC Conf. Comput. Commun. Secur., I. Ray, N. Li, and C. Kruegel, Eds., Oct. 2015, pp. 1310–1321.</p>
+</blockquote>
+<p>第二篇文章主要是使用同态加密的方法，虽然进行了加密，但是在共谋的情况下，坏人对其进行解密并得到原始梯度，仍然会对数据造成泄露。所以梯度传输的方法总归会造成数据的泄露，我们选择权值传输的方法来避免这种泄露。这样做的具体原因我们会在theorem2 中进行讲解</p>
+<blockquote>
+<p>L. T. Phong, Y. Aono, T. Hayashi, L. Wang, and S. Moriai, “Privacypreserving deep learning via additively homomorphic encryption,” IEEE Trans. Inf. Forensics Security, vol. 13, no. 5, pp. 1333–1345, May 2018.</p>
+</blockquote>
+<h3 id="SNT-amp-FNT"><a href="#SNT-amp-FNT" class="headerlink" title="SNT &amp; FNT"></a>SNT &amp; FNT</h3><p>本文提供了两种系统SNT，FNT其中大部分内容我们在SNT内就讲到所以我们会详细介绍SNT，并之后简要涉及FNT。我们首先明确在分布式学习过程中，每次进行一个大的循环即每个trainer都进行一次，包含对于每一个trainer的小循环。其中每个符号的意义及说明如下，</p>
+<ol>
+<li> server端是Honest-but-curious 的。</li>
+<li>Dataseti 指代每个人能掌握的数据集。</li>
+<li>（X,Y）是Dataset的子集，且根据分布不同可以是整个数据集或者随机选择的一部分。</li>
+<li>K是trainer 间共享的密钥，但是不能告诉 server –FNT 就不需要了。</li>
+<li>$Enc_k(W)$是用k密钥对W进行加密。</li>
+<li>encW 是加密后的密文。</li>
+<li> $Dec_k(C)$是用K密钥对C进行解密。</li>
+<li>$W_0$是随机选择的初始权重。其中除K以外的所有变量都是vector形式出现的。</li>
+</ol>
+<p>每个trainer执行的操作如下:<br>$$<br>W_1=Dec_k(encW_1) \\<br>G_2 = \frac{\delta J(W_1,X_2,Y_2)}{\delta W} \\<br>W_2 = W_1 - \alpha(t)·G_2 \\<br>encW_2 = Enc_k(W_2)<br>$$<br>​      </p>
+<p>然后将encW传给server，并由server端发送给下一个trainer。</p>
+<img src="/.io//03/20/Transmission/snt.png" class title="snt">
+
+<p>  *<em>FNT</em>***系统是全连接的,这就产生了一个问题，经过我们对于SNT的描述来看，我们可以以固定的顺序进行训练，那我们为什么需要全连接，增加这么多的路径呢，原因有以下三点：</p>
+<ol>
+<li>如果路径失效，那么系统可能会因此坏掉，所以全连接会增加可靠性。</li>
+<li>全连接的方法可以适应随机发送的工作模式，而不用只能按顺序发送。</li>
+<li>可以实现匿名传输的安全措施，这个我们接下来会讲。</li>
+</ol>
+<img src="/.io//03/20/Transmission/fnt.png" class title="fnt">
+
+<h3 id="安全-及-准确性-理论解释"><a href="#安全-及-准确性-理论解释" class="headerlink" title="安全 及 准确性 理论解释"></a>安全 及 准确性 理论解释</h3><h4 id="理论一：系统在面对诚实但好奇的服务端下的安全"><a href="#理论一：系统在面对诚实但好奇的服务端下的安全" class="headerlink" title="理论一：系统在面对诚实但好奇的服务端下的安全"></a>理论一：系统在面对诚实但好奇的服务端下的安全</h4><p>我们使用对称加密方法使server端只能看见加密后的W权重，我们选用能抵抗选择的对称加密方法即可。</p>
+<h4 id="理论二：在面对极端共谋collusion下的安全性"><a href="#理论二：在面对极端共谋collusion下的安全性" class="headerlink" title="理论二：在面对极端共谋collusion下的安全性"></a>理论二：在面对极端共谋collusion下的安全性</h4><p>极端共谋即当只有trainer1可信，trainer2-l,server都不可信的情况下,坏人也不能计算出trainer1的数据集信息，除非他们解决非线性问题或子集和问题</p>
+<p>其中<strong>非线性问题</strong>代表我们在进行计算时，我们选择的激活函数都是非线性函数，如果我们想要从计算出来的权值恢复数据集的本身数据，那么我们就需要解决非线性问题，而这种问题是十分难解的</p>
+<p>子集和问题的讲解我们需要借助一些数学公式，首先我们明确的是，在每个训练者经历的一次小循环中，他需要执行有多个公式组成的(1)号式子，并通过化简得到到（2）号式子，因为我们假定前后trainer知道初始的W和结束后的W，那么他未知的就是计算后的(3)号式子。<br>$$<br>G_1 = \frac{\delta J(W_{0},X_1,Y_1)}{\delta W} \\<br>W_1 = W_{0} - \alpha(1)·G_1 \\<br>\vdots \\<br>G_i = \frac{\delta J(W_{i-1},X_i,Y_i)}{\delta W} \\<br>W_i = W_{i-1} - \alpha(i)·G_i \\<br>\vdots \\<br>G_n = \frac{\delta J(W_{n-1},X_n,Y_n)}{\delta W} \\<br>W_n = W_{n-1} - \alpha(n)·G_n     (1)<br>$$</p>
+<p>$$<br>W^{(final)} = W_n \\<br>= W_n-1 - \alpha_nG_n \\<br>= W_n-2 - \alpha_{n-1}G_{n-1} - \alpha_nG_n \\<br>\vdots \\<br>= w_0 - (\alpha_{1}G_{1} + \dots + \alpha_nG_n) \\<br>= W^{(init)} - (\alpha_{1}G_{1} + \dots + \alpha_nG_n) (2) \\<br>W^{(init)} - W^{(final)} = (\alpha_{1}G_{1} + \dots + \alpha_nG_n) (3)<br>$$</p>
+<p>其中符号的定义如下</p>
+<ul>
+<li><p> (𝑋_𝑖,𝑌_𝑖) (1≤𝑖≤𝑛)是Dataset1洗牌后的一小部分</p>
+</li>
+<li><p> 𝛼_𝑖<em>可以是相同的，也可以是trainer1自己选择的</em></p>
+</li>
+<li><p> 𝑛 = |𝐷𝑎𝑡𝑎𝑠𝑒𝑡1|/𝑏𝑎𝑡𝑐ℎ_𝑠𝑖𝑧𝑒≫1</p>
+</li>
+</ul>
+<p>我们看到，我们已知（3）式的和，且n是十分大的。算得每个值是一个NP-Complete难解问题，需要多项式未知的时间复杂度。所以他是安全的。</p>
+<h4 id="定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。"><a href="#定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。" class="headerlink" title="定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。"></a>定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。</h4><p>  该定理在逻辑上理解就可以，文中也只给了描述性的证明</p>
+<img src="/.io//03/20/Transmission/fig3.jpg" class title="fig3">
+
+<hr>
+<h3 id="附加考虑-additional-consideration"><a href="#附加考虑-additional-consideration" class="headerlink" title="附加考虑 additional consideration"></a>附加考虑 additional consideration</h3><p>在该系统运用和实验实际执行的过程中，文中也增加了很多其他非主体系统涉及的方法。</p>
+<h4 id="为了证明子集和问题的实验数据"><a href="#为了证明子集和问题的实验数据" class="headerlink" title="为了证明子集和问题的实验数据"></a>为了证明子集和问题的实验数据</h4><p>在实际数据集中，未知数的数量是远大于等式的数量的，具体的实验情况见下图</p>
+<img src="/.io//03/20/Transmission/table3.jpg" class title="table3">
+
+<h4 id="为了增加数据集的训练效果，我们会对数据集进行扩张"><a href="#为了增加数据集的训练效果，我们会对数据集进行扩张" class="headerlink" title="为了增加数据集的训练效果，我们会对数据集进行扩张"></a>为了增加数据集的训练效果，我们会对数据集进行扩张</h4><p>例如图片：利用旋转，裁剪，翻转等方法 , 过拟合后面会解决</p>
+<h4 id="实际训练中使用了SGD的进化版本"><a href="#实际训练中使用了SGD的进化版本" class="headerlink" title="实际训练中使用了SGD的进化版本"></a>实际训练中使用了SGD的进化版本</h4><p>例如 ：RMSProp [27] or Adam [28],</p>
+<hr>
+<h3 id="预定义-additional-hedge"><a href="#预定义-additional-hedge" class="headerlink" title="预定义 additional hedge"></a>预定义 additional hedge</h3><p>同时为了使系统更好的进行，我们还进行了一些预定义。首先我们需要明确想要达到完美的，没有泄露的系统是不可能的。文中将其描述为Dalenius desideratum，即系统将会转化为完全的随机数传输，这是没有丝毫实用性的。</p>
+<h4 id="增加了差分隐私即添加噪声的方法"><a href="#增加了差分隐私即添加噪声的方法" class="headerlink" title="增加了差分隐私即添加噪声的方法"></a>增加了差分隐私即添加噪声的方法</h4><p>用于增加隐私性,其实就是在隐私性和准确性之间寻找一种平衡</p>
+<h4 id="利用Dropout-的方法增加差分隐私和防止过拟合"><a href="#利用Dropout-的方法增加差分隐私和防止过拟合" class="headerlink" title="利用Dropout 的方法增加差分隐私和防止过拟合"></a>利用Dropout 的方法增加差分隐私和防止过拟合</h4><p>Dropout 的方法由神经网络领域大牛Hinton 14年提出，主要做法是在训练时随机隐藏一些结点，这样能降低结点间的依赖性，同时也会降低对于数据的依赖性。</p>
+<p><strong>举例</strong>来说，我们将一支军队分为三部分分别在海陆空进行训练，那么他们最后组合起来环境对于他们影响会很小，同时我们也没有办法根据不同环境他们的作战表现判断他们是海军，陆军还是空军。</p>
+<h4 id="使用匿名传输的方法增强隐私性"><a href="#使用匿名传输的方法增强隐私性" class="headerlink" title="使用匿名传输的方法增强隐私性"></a>使用匿名传输的方法增强隐私性</h4><p>我们使用的具体方法为，在由server转发时隐藏数据的来源，或者随机传输，即一个数据可能来自小集合中的任一元素</p>
+<h4 id="赋予每个结点当发现问题就进行防御性进攻的权力（即1，2，3）"><a href="#赋予每个结点当发现问题就进行防御性进攻的权力（即1，2，3）" class="headerlink" title="赋予每个结点当发现问题就进行防御性进攻的权力（即1，2，3）"></a>赋予每个结点当发现问题就进行防御性进攻的权力（即1，2，3）</h4><h4 id="实际攻击举例"><a href="#实际攻击举例" class="headerlink" title="实际攻击举例"></a>实际攻击举例</h4><p>文中还用实际的攻击进行举例，该攻击的目的是通过获取的信息找到模型上一跳在哪个数据集训练的。</p>
+<p>首先，我们当然可以利用1，2，4的方法综合起来，防止这种攻击。当面临一个更强的具体的攻击时，比如成员推理攻击，我们这样防范。</p>
+<p>成员推理攻击的<strong>目的</strong>是：给出一条样本，可以推断该样本是否在模型的训练数据集中——即便对模型的参数、结构知之甚少，该攻击仍然有效</p>
+<p><strong>本质</strong>是：构建一个二分类模型，以X,Y为参数，判断该项是否在数据集中</p>
+<p><strong>主要部分</strong>是：利用影子模型(shadow model)构建与原目标模型训练集相似的数据集</p>
+<p>文中给出了三种构建影子模型的方法：</p>
+<p><strong>Model-based synthesis：</strong> 直观上，如果目标模型以很高的概率给出了某条record的类别，那么该record与目标模型训练集中的数据应该是十分相似的。所以，可以用目标模型本身来构建影子模型的训练数据：</p>
+<ul>
+<li> 我们通过差分隐私添加噪声的方法使概率处于变化中，挑战他的阈值</li>
+</ul>
+<p><strong>Statistics-based synthesis：</strong> 攻击者知道目标模型训练数据的分布信息，比如feature的边缘分布，那么可以直接由分布生成数据。</p>
+<p><strong>Noisy real data：</strong> 攻击者也许可以获得和目标模型训练集数据相似的数据，可以认为是目标模型训练集的噪声版本，直接利用之</p>
+<ul>
+<li>对于二和三方法，由于本文的数据集只会在本地被训练，所以攻击者既不能得到分布也不能得到带噪声的数据，因此可以防范这种攻击。</li>
+</ul>
 
     
 
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>thanks bro<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/alipay.jpg">
+                    <span class="reward-type">支付宝</span>
+                  </div>
+                  
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/weixin.png">
+                    <span class="reward-type">微信</span>
+                  </div>
+                  
+                </div>
+              </span>
+            </span>
+          </span>
+        </div>
+      </a>
+    </div>
+    
+
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          Dingsoul
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="https://dingiso.github.io/2021/03/20/Transmission/" title="privacy-preserving deep-learning via weight Transmission" target="_blank">https://dingiso.github.io/2021/03/20/Transmission/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
     
 
   </div>
@@ -281,7 +469,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">privacy-preserving</a>
         		</li>
       		
 		</ul>
@@ -290,16 +478,76 @@
     
 
     
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/08/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20%E6%9C%9F%E6%9C%AB%E6%80%BB%E7%BB%93/">展开全文 >></a>
-    </p>
+
     
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://dingiso.github.io/2021/03/20/Transmission/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
 
     
     <div class="clearfix"></div>
   </div>
   </div>
 </article>
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2021/03/13/UNIX%20%E9%AB%98%E7%BA%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%A4%8D%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">UNIX 高级网络编程复习</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -320,676 +568,14 @@
 
 
 
-  
-    <article id="post-第二阶段总结及规划" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/08/01/%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E5%8F%8A%E8%A7%84%E5%88%92/" target="_blank">zCore 第二阶段总结及规划</a>
-  
-    </h1>
-  
 
 
-  
-  
-<a href="/2020/08/01/%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E5%8F%8A%E8%A7%84%E5%88%92/" class="archive-article-date">
-        <time datetime="2020-08-01T07:07:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-01</time>
-</a>
 
-  
-  
-    
 
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>本文是zCore 的第二阶段的总结以及对接下来工作的规划</p>
-    
-    <a class="article-more-a" href="/2020/08/01/%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E5%8F%8A%E8%A7%84%E5%88%92/#more">more >></a>
-    
-    
 
-    
 
-    
 
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">zCore</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/08/01/%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E5%8F%8A%E8%A7%84%E5%88%92/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rCore-tutorial总结文档" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/25/rCore-tutorial%E6%80%BB%E7%BB%93%E6%96%87%E6%A1%A3/" target="_blank">rCore-tutorial 总结文档</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/25/rCore-tutorial%E6%80%BB%E7%BB%93%E6%96%87%E6%A1%A3/" class="archive-article-date">
-        <time datetime="2020-07-25T12:07:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-25</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h3 id="lab-简单总结"><a href="#lab-简单总结" class="headerlink" title="lab 简单总结"></a>lab 简单总结</h3><p>本文是对rCore-tutorial第一阶段的6个lab的总结文档，简单概括了每个lab的内容和作用</p>
-    
-    <a class="article-more-a" href="/2020/07/25/rCore-tutorial%E6%80%BB%E7%BB%93%E6%96%87%E6%A1%A3/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">rCore</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/25/rCore-tutorial%E6%80%BB%E7%BB%93%E6%96%87%E6%A1%A3/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-实验四" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E5%9B%9B/" target="_blank">rCore实验四总结</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E5%9B%9B/" class="archive-article-date">
-        <time datetime="2020-07-25T05:47:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-25</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>实验四的分析及解答</p>
-    
-    <a class="article-more-a" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E5%9B%9B/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">rCore</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E5%9B%9B/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-实验三" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E4%B8%89/" target="_blank">rCore实验三总结</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E4%B8%89/" class="archive-article-date">
-        <time datetime="2020-07-25T00:17:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-25</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>实验三的分析及解答</p>
-    
-    <a class="article-more-a" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E4%B8%89/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">rCore</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/25/%E5%AE%9E%E9%AA%8C%E4%B8%89/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-计算机组成与设计RISC-V" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1RISC-V/" target="_blank">深入理解计算机系统-RISC-V</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1RISC-V/" class="archive-article-date">
-        <time datetime="2020-07-23T08:03:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>本文是在阅读《深入理解计算机系统-RISC-V 》后写的，主要针对risc-v架构的内容的阐述</p>
-    
-    <a class="article-more-a" href="/2020/07/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1RISC-V/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">RISC-V</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E8%AE%BE%E8%AE%A1RISC-V/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-实验二" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/19/%E5%AE%9E%E9%AA%8C%E4%BA%8C/" target="_blank">实验二总结</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/19/%E5%AE%9E%E9%AA%8C%E4%BA%8C/" class="archive-article-date">
-        <time datetime="2020-07-19T09:27:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-19</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>实验二的分析及解答</p>
-    
-    <a class="article-more-a" href="/2020/07/19/%E5%AE%9E%E9%AA%8C%E4%BA%8C/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">rCore</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/19/%E5%AE%9E%E9%AA%8C%E4%BA%8C/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-实验一" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/07/12/%E5%AE%9E%E9%AA%8C%E4%B8%80/" target="_blank">实验一总结</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/07/12/%E5%AE%9E%E9%AA%8C%E4%B8%80/" class="archive-article-date">
-        <time datetime="2020-07-12T05:21:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-12</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>实验一的分析及解答</p>
-    
-    <a class="article-more-a" href="/2020/07/12/%E5%AE%9E%E9%AA%8C%E4%B8%80/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">OS</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">risc-v</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/07/12/%E5%AE%9E%E9%AA%8C%E4%B8%80/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
-    </nav>
-  
 
 
           </div>
@@ -1029,8 +615,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
