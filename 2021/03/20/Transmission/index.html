@@ -10,23 +10,23 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析">
+  <meta name="description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析 比较全面">
 <meta property="og:type" content="article">
 <meta property="og:title" content="privacy-preserving deep-learning via weight Transmission">
 <meta property="og:url" content="https://dingiso.github.io/2021/03/20/Transmission/index.html">
 <meta property="og:site_name" content="Dingisoul">
-<meta property="og:description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析">
+<meta property="og:description" content="本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析 比较全面">
 <meta property="og:locale">
-<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/snt.png">
-<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/fnt.png">
-<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/fig3.jpg">
-<meta property="og:image" content="https://dingiso.github.io/.io//03/20/Transmission/table3.jpg">
+<meta property="og:image" content="https://dingiso.github.io/2021/03/20/Transmission/snt.png">
+<meta property="og:image" content="https://dingiso.github.io/2021/03/20/Transmission/fnt.png">
+<meta property="og:image" content="https://dingiso.github.io/2021/03/20/Transmission/fig3.jpg">
+<meta property="og:image" content="https://dingiso.github.io/2021/03/20/Transmission/table3.jpg">
 <meta property="article:published_time" content="2021-03-20T11:42:37.000Z">
-<meta property="article:modified_time" content="2021-04-21T11:42:07.594Z">
+<meta property="article:modified_time" content="2021-05-11T09:33:55.165Z">
 <meta property="article:author" content="Dingsoul">
 <meta property="article:tag" content="privacy-preserving">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://dingiso.github.io/.io//03/20/Transmission/snt.png">
+<meta name="twitter:image" content="https://dingiso.github.io/2021/03/20/Transmission/snt.png">
   
     <link rel="alternative" href="/atom.xml" title="Dingisoul" type="application/atom+xml">
   
@@ -287,6 +287,7 @@
   <div class="article-entry" itemprop="articleBody">
     
     <p>本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析</p>
+<p>比较全面 </p>
 <a id="more"></a>
 
 <h3 id="论文题目理解"><a href="#论文题目理解" class="headerlink" title="论文题目理解"></a>论文题目理解</h3><p>本文设立了一个能保护隐私的深度学习算法，根据本文的内容，我将原题目《Privacy-Preserving Deep Learning via Weight Transmission》扩展为《Privacy-preserving SGD for distributed trainers via weight transmission》即通过权重传输实现的针对分布式训练者的隐私保护随机梯度下降算法，通过对题目的分析，我们知道本文的书写环境和目的如下：</p>
@@ -345,7 +346,7 @@
 </ol>
 <p>每个trainer执行的操作如下:<br>$$<br>W_1=Dec_k(encW_1) \\<br>G_2 = \frac{\delta J(W_1,X_2,Y_2)}{\delta W} \\<br>W_2 = W_1 - \alpha(t)·G_2 \\<br>encW_2 = Enc_k(W_2)<br>$$<br>​      </p>
 <p>然后将encW传给server，并由server端发送给下一个trainer。</p>
-<img src="/.io//03/20/Transmission/snt.png" class title="snt">
+<img src="/2021/03/20/Transmission/snt.png" class="" title="snt">
 
 <p>  *<em>FNT</em>***系统是全连接的,这就产生了一个问题，经过我们对于SNT的描述来看，我们可以以固定的顺序进行训练，那我们为什么需要全连接，增加这么多的路径呢，原因有以下三点：</p>
 <ol>
@@ -353,7 +354,7 @@
 <li>全连接的方法可以适应随机发送的工作模式，而不用只能按顺序发送。</li>
 <li>可以实现匿名传输的安全措施，这个我们接下来会讲。</li>
 </ol>
-<img src="/.io//03/20/Transmission/fnt.png" class title="fnt">
+<img src="/2021/03/20/Transmission/fnt.png" class="" title="fnt">
 
 <h3 id="安全-及-准确性-理论解释"><a href="#安全-及-准确性-理论解释" class="headerlink" title="安全 及 准确性 理论解释"></a>安全 及 准确性 理论解释</h3><h4 id="理论一：系统在面对诚实但好奇的服务端下的安全"><a href="#理论一：系统在面对诚实但好奇的服务端下的安全" class="headerlink" title="理论一：系统在面对诚实但好奇的服务端下的安全"></a>理论一：系统在面对诚实但好奇的服务端下的安全</h4><p>我们使用对称加密方法使server端只能看见加密后的W权重，我们选用能抵抗选择的对称加密方法即可。</p>
 <h4 id="理论二：在面对极端共谋collusion下的安全性"><a href="#理论二：在面对极端共谋collusion下的安全性" class="headerlink" title="理论二：在面对极端共谋collusion下的安全性"></a>理论二：在面对极端共谋collusion下的安全性</h4><p>极端共谋即当只有trainer1可信，trainer2-l,server都不可信的情况下,坏人也不能计算出trainer1的数据集信息，除非他们解决非线性问题或子集和问题</p>
@@ -371,12 +372,12 @@
 </ul>
 <p>我们看到，我们已知（3）式的和，且n是十分大的。算得每个值是一个NP-Complete难解问题，需要多项式未知的时间复杂度。所以他是安全的。</p>
 <h4 id="定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。"><a href="#定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。" class="headerlink" title="定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。"></a>定理三：分布式的数据集的运算与在一个主机上对所有数据集的并集进行运算得到的结果是相同的。</h4><p>  该定理在逻辑上理解就可以，文中也只给了描述性的证明</p>
-<img src="/.io//03/20/Transmission/fig3.jpg" class title="fig3">
+<img src="/2021/03/20/Transmission/fig3.jpg" class="" title="fig3">
 
 <hr>
 <h3 id="附加考虑-additional-consideration"><a href="#附加考虑-additional-consideration" class="headerlink" title="附加考虑 additional consideration"></a>附加考虑 additional consideration</h3><p>在该系统运用和实验实际执行的过程中，文中也增加了很多其他非主体系统涉及的方法。</p>
 <h4 id="为了证明子集和问题的实验数据"><a href="#为了证明子集和问题的实验数据" class="headerlink" title="为了证明子集和问题的实验数据"></a>为了证明子集和问题的实验数据</h4><p>在实际数据集中，未知数的数量是远大于等式的数量的，具体的实验情况见下图</p>
-<img src="/.io//03/20/Transmission/table3.jpg" class title="table3">
+<img src="/2021/03/20/Transmission/table3.jpg" class="" title="table3">
 
 <h4 id="为了增加数据集的训练效果，我们会对数据集进行扩张"><a href="#为了增加数据集的训练效果，我们会对数据集进行扩张" class="headerlink" title="为了增加数据集的训练效果，我们会对数据集进行扩张"></a>为了增加数据集的训练效果，我们会对数据集进行扩张</h4><p>例如图片：利用旋转，裁剪，翻转等方法 , 过拟合后面会解决</p>
 <h4 id="实际训练中使用了SGD的进化版本"><a href="#实际训练中使用了SGD的进化版本" class="headerlink" title="实际训练中使用了SGD的进化版本"></a>实际训练中使用了SGD的进化版本</h4><p>例如 ：RMSProp [27] or Adam [28],</p>
