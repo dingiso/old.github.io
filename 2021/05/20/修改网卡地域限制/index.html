@@ -474,7 +474,7 @@
                 <p>本文主要介绍了在构建路由器时为了破解地域限制的选路机制的相关工作、</p>
 <a id="more"></a> 
 <h1 id="破解网卡的-Regulatory-Domain"><a href="#破解网卡的-Regulatory-Domain" class="headerlink" title="破解网卡的 Regulatory Domain"></a>破解网卡的 Regulatory Domain</h1><p>我们网卡的 版本号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Network controller: Qualcomm Atheros AR958x 802.11abgn Wireless Network Adapter (rev 01)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">Network controller: Qualcomm Atheros AR958x 802.11abgn Wireless Network Adapter (rev 01)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>[TOC]</p>
 <h2 id="利用-reghack-修改内核模块"><a href="#利用-reghack-修改内核模块" class="headerlink" title="利用 reghack 修改内核模块"></a>利用 reghack 修改内核模块</h2><blockquote>
 <p>曾经的一个教程</p>
@@ -484,20 +484,74 @@
 <p>无线网卡驱动根据ISO-3166 alpha2规定的国家代码（如美国US，中国CN，德国DE，韩国KR，日本JP），对网卡的工作频率进行管理。</p>
 <p>高通Atheros在网卡驱动的公共部分加入了Regulatory Doamin管理的功能。针对销往不同国家的网卡产品，通过直接在网卡芯片的可擦写存储器（EEPROM）中写入相应的国家代码，驱动工作时读取该代码并开启相应的工作频段。</p>
 <p>由于项目的需求，我们买了几张Atheros 958x系列的无线网卡，支持2.4/5GHz双频段，但是很遗憾的是这批网卡5GHz的中间一段不被支持。国家代码可以通过下列命令察看。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ dmesg | grep ath</span><br><span class="line">$ iwlist chan</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">dmesg</span> <span class="token operator">|</span> <span class="token function">grep</span> ath
+$ iwlist chan<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>尽管使用了iw工具来修改linux系统的Regulatory Domain管理部分的国家代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ iw reg <span class="built_in">set</span> US</span><br><span class="line">$ iw reg get</span><br><span class="line">$ iwlist chan</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ iw reg <span class="token builtin class-name">set</span> US
+$ iw reg get
+$ iwlist chan<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>但是由于EEPROM的限制，被屏蔽的频段总是无法开启。</p>
 <p>为了开启尽可能多的5GHz频段，在没有直接修改EEPROM的方法的情况下，我只能修改破解驱动中关于频段管理的部分。Google 到<a target="_blank" rel="noopener" href="https://github.com/Luminger/reghack">reghack及其源代码</a>，并进行重新编译</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@linux: gcc reghack.c -o reghack</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">root@linux: gcc reghack.c -o reghack<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>如果没有gcc 这样安装</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> build-essential<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>安装的Ubuntu 12.04.4系统是linux 3.11内核，linux 3.7 内核开始加入了模块签名及验证机制。下面的破解过程虽然顺利进行，但重启之后破解的无线模块cfg80211.ko和ath.ko无法加载，网卡不能驱动。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@linux:/home/user<span class="comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/net/wireless/cfg80211.ko </span></span><br><span class="line">Patching @ 0x0004cf30: core world6 regdomain <span class="keyword">in</span> cfg80211/reg.o</span><br><span class="line">root@linux:/home/user<span class="comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/drivers/net/wireless/ath/ath.ko </span></span><br><span class="line">Patching @ 0x00002110: ath world regdomain with 5 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x000021a0: ath world regdomain with 4 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00002220: ath world regdomain with 3 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00002280: ath world regdomain with 3 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x000022e0: ath world regdomain with 4 rules <span class="keyword">in</span> ath/regd.o</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">root@linux:/home/user<span class="token comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/net/wireless/cfg80211.ko </span>
+Patching @ 0x0004cf30: core world6 regdomain <span class="token keyword">in</span> cfg80211/reg.o
+root@linux:/home/user<span class="token comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/drivers/net/wireless/ath/ath.ko </span>
+Patching @ 0x00002110: ath world regdomain with <span class="token number">5</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x000021a0: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00002220: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00002280: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x000022e0: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h4 id="降回到linux-3-2内核"><a href="#降回到linux-3-2内核" class="headerlink" title="降回到linux 3.2内核"></a>降回到linux 3.2内核</h4><p>如果你的内核版本默认就是低于3.7内核，就无需进行此操作。内核版本察看命令 <code>uname -a</code>,使用如下命令 <code>sudo apt-get install linux-image</code> 将linux 3.2内核及源码等自动下载安装。重启选择<code>Prevous Linux Versions</code>进入，然后选择启用3.2内核。为了安全起见，先进行备份处理。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">user@linux:~$ gcc reghack.c -o reghack</span><br><span class="line">user@linux:~$ sudo cp /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko.backup</span><br><span class="line">user@linux:~$ sudo cp /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko.backup</span><br><span class="line">user@linux:~$ sudo ./reghack /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko</span><br><span class="line">Patching @ 0x00001e10: ath world regdomain with 5 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00001e90: ath world regdomain with 4 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00001ef8: ath world regdomain with 3 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00001f48: ath world regdomain with 3 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">Patching @ 0x00001f98: ath world regdomain with 4 rules <span class="keyword">in</span> ath/regd.o</span><br><span class="line">user@linux:~$ sudo ./reghack /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko</span><br><span class="line">Patching @ 0x00022c60: core world5 regdomain <span class="keyword">in</span> cfg80211/reg.o</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">user@linux:~$ gcc reghack.c -o reghack
+user@linux:~$ <span class="token function">sudo</span> <span class="token function">cp</span> /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko.backup
+user@linux:~$ <span class="token function">sudo</span> <span class="token function">cp</span> /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko.backup
+user@linux:~$ <span class="token function">sudo</span> ./reghack /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko
+Patching @ 0x00001e10: ath world regdomain with <span class="token number">5</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00001e90: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00001ef8: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00001f48: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
+Patching @ 0x00001f98: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
+user@linux:~$ <span class="token function">sudo</span> ./reghack /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko
+Patching @ 0x00022c60: core world5 regdomain <span class="token keyword">in</span> cfg80211/reg.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>破解后的频段见如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">wlan0     32 channels <span class="keyword">in</span> total; available frequencies :</span><br><span class="line">          Channel 01 : 2.412 GHz</span><br><span class="line">          Channel 02 : 2.417 GHz</span><br><span class="line">          Channel 03 : 2.422 GHz</span><br><span class="line">          Channel 04 : 2.427 GHz</span><br><span class="line">          Channel 05 : 2.432 GHz</span><br><span class="line">          Channel 06 : 2.437 GHz</span><br><span class="line">          Channel 07 : 2.442 GHz</span><br><span class="line">          Channel 08 : 2.447 GHz</span><br><span class="line">          Channel 09 : 2.452 GHz</span><br><span class="line">          Channel 10 : 2.457 GHz</span><br><span class="line">          Channel 11 : 2.462 GHz</span><br><span class="line">          Channel 36 : 5.18 GHz</span><br><span class="line">          Channel 40 : 5.2 GHz</span><br><span class="line">          Channel 44 : 5.22 GHz</span><br><span class="line">          Channel 48 : 5.24 GHz</span><br><span class="line">          Channel 52 : 5.26 GHz</span><br><span class="line">          Channel 56 : 5.28 GHz</span><br><span class="line">          Channel 60 : 5.3 GHz</span><br><span class="line">          Channel 64 : 5.32 GHz</span><br><span class="line">          Channel 100 : 5.5 GHz</span><br><span class="line">          Channel 104 : 5.52 GHz</span><br><span class="line">          Channel 108 : 5.54 GHz</span><br><span class="line">          Channel 112 : 5.56 GHz</span><br><span class="line">          Channel 116 : 5.58 GHz</span><br><span class="line">          Channel 132 : 5.66 GHz</span><br><span class="line">          Channel 136 : 5.68 GHz</span><br><span class="line">          Channel 140 : 5.7 GHz</span><br><span class="line">          Channel 149 : 5.745 GHz</span><br><span class="line">          Channel 153 : 5.765 GHz</span><br><span class="line">          Channel 157 : 5.785 GHz</span><br><span class="line">          Channel 161 : 5.805 GHz</span><br><span class="line">          Channel 165 : 5.825 GHz</span><br><span class="line">          Current Frequency:2.437 GHz (Channel 6)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">wlan0     <span class="token number">32</span> channels <span class="token keyword">in</span> total<span class="token punctuation">;</span> available frequencies <span class="token builtin class-name">:</span>
+          Channel 01 <span class="token builtin class-name">:</span> <span class="token number">2.412</span> GHz
+          Channel 02 <span class="token builtin class-name">:</span> <span class="token number">2.417</span> GHz
+          Channel 03 <span class="token builtin class-name">:</span> <span class="token number">2.422</span> GHz
+          Channel 04 <span class="token builtin class-name">:</span> <span class="token number">2.427</span> GHz
+          Channel 05 <span class="token builtin class-name">:</span> <span class="token number">2.432</span> GHz
+          Channel 06 <span class="token builtin class-name">:</span> <span class="token number">2.437</span> GHz
+          Channel 07 <span class="token builtin class-name">:</span> <span class="token number">2.442</span> GHz
+          Channel 08 <span class="token builtin class-name">:</span> <span class="token number">2.447</span> GHz
+          Channel 09 <span class="token builtin class-name">:</span> <span class="token number">2.452</span> GHz
+          Channel <span class="token number">10</span> <span class="token builtin class-name">:</span> <span class="token number">2.457</span> GHz
+          Channel <span class="token number">11</span> <span class="token builtin class-name">:</span> <span class="token number">2.462</span> GHz
+          Channel <span class="token number">36</span> <span class="token builtin class-name">:</span> <span class="token number">5.18</span> GHz
+          Channel <span class="token number">40</span> <span class="token builtin class-name">:</span> <span class="token number">5.2</span> GHz
+          Channel <span class="token number">44</span> <span class="token builtin class-name">:</span> <span class="token number">5.22</span> GHz
+          Channel <span class="token number">48</span> <span class="token builtin class-name">:</span> <span class="token number">5.24</span> GHz
+          Channel <span class="token number">52</span> <span class="token builtin class-name">:</span> <span class="token number">5.26</span> GHz
+          Channel <span class="token number">56</span> <span class="token builtin class-name">:</span> <span class="token number">5.28</span> GHz
+          Channel <span class="token number">60</span> <span class="token builtin class-name">:</span> <span class="token number">5.3</span> GHz
+          Channel <span class="token number">64</span> <span class="token builtin class-name">:</span> <span class="token number">5.32</span> GHz
+          Channel <span class="token number">100</span> <span class="token builtin class-name">:</span> <span class="token number">5.5</span> GHz
+          Channel <span class="token number">104</span> <span class="token builtin class-name">:</span> <span class="token number">5.52</span> GHz
+          Channel <span class="token number">108</span> <span class="token builtin class-name">:</span> <span class="token number">5.54</span> GHz
+          Channel <span class="token number">112</span> <span class="token builtin class-name">:</span> <span class="token number">5.56</span> GHz
+          Channel <span class="token number">116</span> <span class="token builtin class-name">:</span> <span class="token number">5.58</span> GHz
+          Channel <span class="token number">132</span> <span class="token builtin class-name">:</span> <span class="token number">5.66</span> GHz
+          Channel <span class="token number">136</span> <span class="token builtin class-name">:</span> <span class="token number">5.68</span> GHz
+          Channel <span class="token number">140</span> <span class="token builtin class-name">:</span> <span class="token number">5.7</span> GHz
+          Channel <span class="token number">149</span> <span class="token builtin class-name">:</span> <span class="token number">5.745</span> GHz
+          Channel <span class="token number">153</span> <span class="token builtin class-name">:</span> <span class="token number">5.765</span> GHz
+          Channel <span class="token number">157</span> <span class="token builtin class-name">:</span> <span class="token number">5.785</span> GHz
+          Channel <span class="token number">161</span> <span class="token builtin class-name">:</span> <span class="token number">5.805</span> GHz
+          Channel <span class="token number">165</span> <span class="token builtin class-name">:</span> <span class="token number">5.825</span> GHz
+          Current Frequency:2.437 GHz <span class="token punctuation">(</span>Channel <span class="token number">6</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="编译内核模块"><a href="#编译内核模块" class="headerlink" title="编译内核模块"></a>编译内核模块</h2><p>linux内核从3.7 开始加入模块签名检查机制，如果内核选项CONFIG_MODULE_SIG和CONFIG_MODULE_SIG_FORCE打开的话，当加载模块时内核会检查模块的签名，如果签名不存在或者签名内容不一致，会强制退出模块的加载。所以为模块签名就尤为重要。如果是内核选项CONFIG_MODULE_SIG_ALL打开，内核编译模块时会自动为模块签名。否则就要自己对模块签名。</p>
 <p>首先我们就要想到用什么签名工具，因为签名机制从3.7 内核才加入，所以为模块签名的资料少之又少，我找了很长时间也没有头绪，网上说的最多的都是openssl来做签名。所以理所当然的我也使用openssl来做签名，但是它是linux内核之外的工具，就算生成签名，你还要手动添加到模块.ko文件最后，还要设置一些内核要检查的固定结构体(例如：signature_module结构)，很是麻烦，并且内核的key你拿不到，用的不是内核的可以签名肯定通不过检查。所以这种方法至少我认为不可行。</p>
 <p>有一篇英文资料比较好</p>
@@ -509,7 +563,11 @@
 <h4 id="Configuring-module-signature-verification"><a href="#Configuring-module-signature-verification" class="headerlink" title="Configuring module signature verification"></a>Configuring module signature verification</h4><p>Module signature verification is a kernel feature, so has to be enabled through the Linux kernel configuration. You can find the necessary options under Enable loadable module support.</p>
 <p> [<a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#">Collapse</a>] </p>
 <p>Kernel configuration Enable module signature verification</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--- Enable loadable module support</span><br><span class="line">[*]   Module signature verification</span><br><span class="line">[*]     Require modules to be validly signed</span><br><span class="line">[*]     Automatically sign all modules</span><br><span class="line">      Which hash algorithm should modules be signed with? (Sign modules with SHA-512) ---&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">--- Enable loadable module support
+[*]   Module signature verification
+[*]     Require modules to be validly signed
+[*]     Automatically sign all modules
+      Which hash algorithm should modules be signed with? (Sign modules with SHA-512) ---&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>The option Module signature verification (CONFIG_MODULE_SIG) enables the module signature verification in the Linux kernel. It supports two approaches on signed module support: a rather permissive one and a strict one. By default, the permissive approach is used, which means that the Linux kernel module either has to have a valid signature, or no signature. With the strict approach, a valid signature must be present. In the above example, the strict approach is used by selecting Require modules to be validly signed (CONFIG_MODULE_SIG_FORCE). Another way of enabling this strict approach is to set the kernel boot option enforcemodulesig=1.</p>
 <p>When building the Linux kernel, the kernel modules will not be signed automatically unless you select Automatically sign all modules(CONFIG_MODULE_SIG_ALL).</p>
 <p>Finally, we need to select the hash algorithm to use with the cryptographic signature. In the above example, we use SHA-512.</p>
@@ -517,27 +575,61 @@
 <p>If we want to use our own keys, you can use openssl to create a key pair (private key and public key). The following command, taken from kernel/Makefile, creates such a key pair.</p>
 <p> [<a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#">Collapse</a>] </p>
 <p>File x509.genkey Key generation configuration file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[ req ]</span><br><span class="line">default_bits &#x3D; 4096</span><br><span class="line">distinguished_name &#x3D; req_distinguished_name</span><br><span class="line">prompt &#x3D; no</span><br><span class="line">string_mask &#x3D; utf8only</span><br><span class="line">x509_extensions &#x3D; myexts</span><br><span class="line">  </span><br><span class="line">[ req_distinguished_name ]</span><br><span class="line">O &#x3D; GenFic</span><br><span class="line">CN &#x3D; Kernel Signing Key</span><br><span class="line">emailAddress &#x3D; server.support@genfic.com</span><br><span class="line">  </span><br><span class="line">[ myexts ]</span><br><span class="line">basicConstraints&#x3D;critical,CA:FALSE</span><br><span class="line">keyUsage&#x3D;digitalSignature</span><br><span class="line">subjectKeyIdentifier&#x3D;hash</span><br><span class="line">authorityKeyIdentifier&#x3D;keyid</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">[ req ]
+default_bits &#x3D; 4096
+distinguished_name &#x3D; req_distinguished_name
+prompt &#x3D; no
+string_mask &#x3D; utf8only
+x509_extensions &#x3D; myexts
+  
+[ req_distinguished_name ]
+O &#x3D; GenFic
+CN &#x3D; Kernel Signing Key
+emailAddress &#x3D; server.support@genfic.com
+  
+[ myexts ]
+basicConstraints&#x3D;critical,CA:FALSE
+keyUsage&#x3D;digitalSignature
+subjectKeyIdentifier&#x3D;hash
+authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>user $</strong> openssl req -new -nodes -utf8 -sha512 -days 36500 -batch -x509 -config x509.genkey -outform DER -out signing_key.x509 -keyout signing_key.priv</p>
 <p>The resulting files need to be stored as signing_key.x509 and signing_key.priv in the root of the Linux kernel source tree.</p>
 <p>The public key part will be build inside the Linux kernel. If you configured the kernel to sign modules, this signing will take place during the make modules_install part.</p>
 <h4 id="Validating-module-signature-support"><a href="#Validating-module-signature-support" class="headerlink" title="Validating module signature support"></a>Validating module signature support</h4><p>Reboot with the newly configured kernel. In the output of dmesg you should be able to confirm that the proper certificate is loaded:</p>
 <p><strong>user $</strong> dmesg | grep MODSIGN</p>
 <hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[    2.450021] MODSIGN: Loaded cert &#39;GenFic: Kernel Signing Key: b923a5f44eae25bbad52c8bf2742e7b7e6fb0c0e&#39;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">[    2.450021] MODSIGN: Loaded cert &#39;GenFic: Kernel Signing Key: b923a5f44eae25bbad52c8bf2742e7b7e6fb0c0e&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>The kernel modules have the digital signature appended at the end. A simple hexdump can confirm if a signature is present or not:</p>
 <p><strong>user $</strong> hexdump -C vxlan.ko | tail</p>
 <hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00008880  cf 0e e7 cb 10 9e 98 5f  4b 21 d4 03 ba 3d 7e e7  |......._K!...&#x3D;~.|</span><br><span class="line">00008890  68 db f9 e3 5f 62 3c c7  d6 6c 84 c7 d6 68 c1 73  |h..._b&lt;..l...h.s|</span><br><span class="line">000088a0  3d d7 5a 38 66 99 12 b8  84 c9 84 45 dd 68 6d 17  |&#x3D;.Z8f......E.hm.|</span><br><span class="line">000088b0  03 24 dc 9c 6f 6d 11 01  e9 74 82 ea b5 5b 46 07  |.$..om...t...[F.|</span><br><span class="line">000088c0  fe dd 66 97 1a 33 58 3d  6e d0 ac 03 08 16 73 06  |..f..3X&#x3D;n.....s.|</span><br><span class="line">000088d0  9f 90 c4 eb b3 82 1d 9f  48 8c 5b 51 01 06 01 1e  |........H.[Q....|</span><br><span class="line">000088e0  14 00 00 00 00 00 02 02  7e 4d 6f 64 75 6c 65 20  |........~Module |</span><br><span class="line">000088f0  73 69 67 6e 61 74 75 72  65 20 61 70 70 65 6e 64  |signature append|</span><br><span class="line">00008900  65 64 7e 0a                                       |ed~.|</span><br><span class="line">00008904</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">00008880  cf 0e e7 cb 10 9e 98 5f  4b 21 d4 03 ba 3d 7e e7  |......._K!...&#x3D;~.|
+00008890  68 db f9 e3 5f 62 3c c7  d6 6c 84 c7 d6 68 c1 73  |h..._b&lt;..l...h.s|
+000088a0  3d d7 5a 38 66 99 12 b8  84 c9 84 45 dd 68 6d 17  |&#x3D;.Z8f......E.hm.|
+000088b0  03 24 dc 9c 6f 6d 11 01  e9 74 82 ea b5 5b 46 07  |.$..om...t...[F.|
+000088c0  fe dd 66 97 1a 33 58 3d  6e d0 ac 03 08 16 73 06  |..f..3X&#x3D;n.....s.|
+000088d0  9f 90 c4 eb b3 82 1d 9f  48 8c 5b 51 01 06 01 1e  |........H.[Q....|
+000088e0  14 00 00 00 00 00 02 02  7e 4d 6f 64 75 6c 65 20  |........~Module |
+000088f0  73 69 67 6e 61 74 75 72  65 20 61 70 70 65 6e 64  |signature append|
+00008900  65 64 7e 0a                                       |ed~.|
+00008904<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>The string <del>Module signature appended</del> at the end confirms that a signature is present. Of course, it does not confirm that the signature is valid or not.</p>
 <p>To remove the signature, we can use the strip command:</p>
 <p><strong>root #</strong> strip –strip-debug vxlan.ko<br><strong>root #</strong> hexdump -C vxlan.ko | tail</p>
 <hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00097330  6c 5f 67 65 74 5f 73 74  61 74 73 36 34 00 72 63  |l_get_stats64.rc|</span><br><span class="line">00097340  75 5f 62 61 72 72 69 65  72 00 5f 72 61 77 5f 73  |u_barrier._raw_s|</span><br><span class="line">00097350  70 69 6e 5f 75 6e 6c 6f  63 6b 00 72 65 67 69 73  |pin_unlock.regis|</span><br><span class="line">00097360  74 65 72 5f 70 65 72 6e  65 74 5f 64 65 76 69 63  |ter_pernet_devic|</span><br><span class="line">00097370  65 00 6b 6d 61 6c 6c 6f  63 5f 63 61 63 68 65 73  |e.kmalloc_caches|</span><br><span class="line">00097380  00 6e 65 74 64 65 76 5f  69 6e 66 6f 00 6e 65 69  |.netdev_info.nei|</span><br><span class="line">00097390  67 68 5f 6c 6f 6f 6b 75  70 00 72 65 6c 65 61 73  |gh_lookup.releas|</span><br><span class="line">000973a0  65 5f 73 6f 63 6b 00 72  65 67 69 73 74 65 72 5f  |e_sock.register_|</span><br><span class="line">000973b0  6e 65 74 64 65 76 69 63  65 00                    |netdevice.|</span><br><span class="line">000973ba</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">00097330  6c 5f 67 65 74 5f 73 74  61 74 73 36 34 00 72 63  |l_get_stats64.rc|
+00097340  75 5f 62 61 72 72 69 65  72 00 5f 72 61 77 5f 73  |u_barrier._raw_s|
+00097350  70 69 6e 5f 75 6e 6c 6f  63 6b 00 72 65 67 69 73  |pin_unlock.regis|
+00097360  74 65 72 5f 70 65 72 6e  65 74 5f 64 65 76 69 63  |ter_pernet_devic|
+00097370  65 00 6b 6d 61 6c 6c 6f  63 5f 63 61 63 68 65 73  |e.kmalloc_caches|
+00097380  00 6e 65 74 64 65 76 5f  69 6e 66 6f 00 6e 65 69  |.netdev_info.nei|
+00097390  67 68 5f 6c 6f 6f 6b 75  70 00 72 65 6c 65 61 73  |gh_lookup.releas|
+000973a0  65 5f 73 6f 63 6b 00 72  65 67 69 73 74 65 72 5f  |e_sock.register_|
+000973b0  6e 65 74 64 65 76 69 63  65 00                    |netdevice.|
+000973ba<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>If we try to load this module now, we get a failure:</p>
 <p><strong>root #</strong> modprobe vxlan</p>
 <hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">modprobe: ERROR: could not insert &#39;vxlan&#39;: Required key not available</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">modprobe: ERROR: could not insert &#39;vxlan&#39;: Required key not available<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>This confirms that modules without a signature are not loaded.</p>
 <h3 id="Administering-kernel-module-signatures"><a href="#Administering-kernel-module-signatures" class="headerlink" title="Administering kernel module signatures"></a>Administering kernel module signatures</h3><p>Once the kernel boots and we have validated that the signed kernel module support works, it is important to correctly handle the keys themselves.</p>
 <h4 id="Protecting-the-private-key"><a href="#Protecting-the-private-key" class="headerlink" title="Protecting the private key"></a>Protecting the private key</h4><p>The private key, stored as signing_key.priv, needs to be moved to a secure location (unless you will be creating new keys for new kernels, in which case the file can be removed). Do not keep it at /usr/src/linux on production systems as malware can then easily use this key to sign the malicious kernel modules (such as rootkits) and compromise the system further.</p>
@@ -797,30 +889,29 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;Current
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/05/20/%E4%BF%AE%E6%94%B9%E7%BD%91%E5%8D%A1%E5%9C%B0%E5%9F%9F%E9%99%90%E5%88%B6/">
+                <a href="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="修改网卡地域限制">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="数学一思想">
                         
-                        <span class="card-title">修改网卡地域限制</span>
+                        <span class="card-title">数学一思想</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本文主要介绍了在构建路由器时为了破解地域限制的选路机制的相关工作、
+                            本篇文章主要记录数学一中学习过程中迸发的思想
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-20
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-06-14
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -829,12 +920,11 @@
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/WIFI/">
-                        <span class="chip bg-color">WIFI</span>
+                    <a href="/tags/Math/">
+                        <span class="chip bg-color">Math</span>
                     </a>
                     
                 </div>
@@ -1305,6 +1395,6 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</body>
 
 </html>

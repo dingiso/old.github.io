@@ -431,12 +431,12 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/OS/">
-                                <span class="chip bg-color">OS</span>
-                            </a>
-                        
                             <a href="/tags/risc-v/">
                                 <span class="chip bg-color">risc-v</span>
+                            </a>
+                        
+                            <a href="/tags/OS/">
+                                <span class="chip bg-color">OS</span>
                             </a>
                         
                     </div>
@@ -480,15 +480,49 @@
 
 <h1 id="实验题-for-lab-1"><a href="#实验题-for-lab-1" class="headerlink" title="实验题 for lab-1"></a>实验题 for lab-1</h1><p>主要修改了 <code>entry.asm</code> <code>main.rs</code> <code>handler.rs</code> 将三个文件上传上来</p>
 <p><code>x0</code> 寄存器 默认存储<code>0x0</code> ，可直接无条件跳转即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jr x0</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">jr x0<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>或 使下一条运行的指令为 <code>0x0</code> ，通过改变<code>x1</code>寄存器</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld x1 ,(x0)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">ld x1 ,(x0)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>handle_interrupt 函数增加处理项，处理访问错误地址的情况，如果 <code>stval</code> 值为<strong>0</strong>则打印<code>SUCCESS！</code></p>
 <h3 id="简述题"><a href="#简述题" class="headerlink" title="简述题"></a>简述题</h3><p>1.在 <code>rust_main</code> 函数中，执行 <code>ebreak</code> 命令后至函数结束前，<code>sp</code> 寄存器的值是怎样变化的?</p>
 <p>即分析 <code>interrupt.asm</code> .处理中断过程中,</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">addi sp,sp, -34*8 </span><br><span class="line"># 对 sp 减 栈上开辟 Context 所需空间</span><br><span class="line"></span><br><span class="line">SAVE x1, 1</span><br><span class="line">addi x1, sp, 34*8</span><br><span class="line">SAVE x1, 2</span><br><span class="line"># 先存x1,再利用x1存放原来sp值 , 不动用 x2(sp) 以正确使用 SAVE 宏</span><br><span class="line"></span><br><span class="line">mv a0 sp</span><br><span class="line"># 将 sp 作为参数调用 handle_interrupt</span><br><span class="line"></span><br><span class="line">LOAD    x2, 2</span><br><span class="line"># 最后将 sp(x2) 的值恢复</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">addi sp,sp, -34*8 
+# 对 sp 减 栈上开辟 Context 所需空间
+
+SAVE x1, 1
+addi x1, sp, 34*8
+SAVE x1, 2
+# 先存x1,再利用x1存放原来sp值 , 不动用 x2(sp) 以正确使用 SAVE 宏
+
+mv a0 sp
+# 将 sp 作为参数调用 handle_interrupt
+
+LOAD    x2, 2
+# 最后将 sp(x2) 的值恢复<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>2.回答：如果去掉 <code>rust_main</code> 后的 <code>panic</code> 会发生什么，为什么？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">0000000080200000 text_start:</span><br><span class="line">80200000: 17 61 01 00                   auipc   sp, 22</span><br><span class="line">80200004: 13 01 01 59                   addi    sp, sp, 1424</span><br><span class="line">80200008: 97 10 00 00                   auipc   ra, 1</span><br><span class="line">8020000c: e7 80 a0 13                   jalr    314(ra)</span><br><span class="line"></span><br><span class="line">0000000080200014 _ZN4core3ptr24slice_from_raw_parts_mut17h5b8d4c2d17da80d3E:</span><br><span class="line">; pub const fn slice_from_raw_parts_mut&lt;T&gt;(data: *mut T, len: usize) -&gt; *mut [T] &#123;</span><br><span class="line">80200014: 79 71                         addi    sp, sp, -48</span><br><span class="line">80200016: 2a f0                         sd      a0, 32(sp)</span><br><span class="line">80200018: 2e f4                         sd      a1, 40(sp)</span><br><span class="line">;     unsafe &#123; Repr &#123; raw: FatPtr &#123; data, len &#125; &#125;.rust_mut &#125;</span><br><span class="line">8020001a: 2a e8                         sd      a0, 16(sp)</span><br><span class="line">8020001c: 2e ec                         sd      a1, 24(sp)</span><br><span class="line">8020001e: 2a e0                         sd      a0, 0(sp)</span><br><span class="line">80200020: 2e e4                         sd      a1, 8(sp)</span><br><span class="line">; &#125;</span><br><span class="line">80200022: 45 61                         addi    sp, sp, 48</span><br><span class="line">80200024: 82 80                         ret</span><br><span class="line"></span><br><span class="line">0000000080200026 _ZN4core3str11unwrap_or_017h6844c978da275184E:</span><br><span class="line">; fn unwrap_or_0(opt: Option&lt;&amp;u8&gt;) -&gt; u8 &#123;</span><br><span class="line">80200026: 41 11                         addi    sp, sp, -16</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">0000000080200000 text_start:
+80200000: 17 61 01 00                   auipc   sp, 22
+80200004: 13 01 01 59                   addi    sp, sp, 1424
+80200008: 97 10 00 00                   auipc   ra, 1
+8020000c: e7 80 a0 13                   jalr    314(ra)
+
+0000000080200014 _ZN4core3ptr24slice_from_raw_parts_mut17h5b8d4c2d17da80d3E:
+; pub const fn slice_from_raw_parts_mut&lt;T&gt;(data: *mut T, len: usize) -&gt; *mut [T] &#123;
+80200014: 79 71                         addi    sp, sp, -48
+80200016: 2a f0                         sd      a0, 32(sp)
+80200018: 2e f4                         sd      a1, 40(sp)
+;     unsafe &#123; Repr &#123; raw: FatPtr &#123; data, len &#125; &#125;.rust_mut &#125;
+8020001a: 2a e8                         sd      a0, 16(sp)
+8020001c: 2e ec                         sd      a1, 24(sp)
+8020001e: 2a e0                         sd      a0, 0(sp)
+80200020: 2e e4                         sd      a1, 8(sp)
+; &#125;
+80200022: 45 61                         addi    sp, sp, 48
+80200024: 82 80                         ret
+
+0000000080200026 _ZN4core3str11unwrap_or_017h6844c978da275184E:
+; fn unwrap_or_0(opt: Option&lt;&amp;u8&gt;) -&gt; u8 &#123;
+80200026: 41 11                         addi    sp, sp, -16<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>可以看到 <code>rust_main</code>后还有许多<code>rust</code>库函数,可能会直接以运行库函数造成不明错误或死循环</p>
 <h3 id="代码-在-实验题1"><a href="#代码-在-实验题1" class="headerlink" title="代码 在 实验题1"></a>代码 在 <a target="_blank" rel="noopener" href="https://github.com/dingiso/DailySchedule/tree/master/code/lab-1/%E5%AE%9E%E9%AA%8C%E9%A2%98">实验题1</a></h3>
                 
@@ -554,12 +588,12 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/OS/">
-                                    <span class="chip bg-color">OS</span>
-                                </a>
-                            
                                 <a href="/tags/risc-v/">
                                     <span class="chip bg-color">risc-v</span>
+                                </a>
+                            
+                                <a href="/tags/OS/">
+                                    <span class="chip bg-color">OS</span>
                                 </a>
                             
                         </div>
@@ -765,16 +799,16 @@
                 
                 <div class="card-action article-tags">
                     
+                    <a href="/tags/risc-v/">
+                        <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
                     <a href="/tags/rCore/">
                         <span class="chip bg-color">rCore</span>
                     </a>
                     
                     <a href="/tags/OS/">
                         <span class="chip bg-color">OS</span>
-                    </a>
-                    
-                    <a href="/tags/risc-v/">
-                        <span class="chip bg-color">risc-v</span>
                     </a>
                     
                 </div>
@@ -819,12 +853,12 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/OS/">
-                        <span class="chip bg-color">OS</span>
-                    </a>
-                    
                     <a href="/tags/risc-v/">
                         <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
+                    <a href="/tags/OS/">
+                        <span class="chip bg-color">OS</span>
                     </a>
                     
                 </div>
@@ -1249,6 +1283,6 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</body>
 
 </html>

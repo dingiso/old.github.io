@@ -529,7 +529,10 @@
 </blockquote>
 <h2 id="Chapter2-计算机-“语言”-介绍"><a href="#Chapter2-计算机-“语言”-介绍" class="headerlink" title="Chapter2 计算机 “语言” 介绍"></a>Chapter2 计算机 “语言” 介绍</h2><h3 id="2-2-硬件编程语言"><a href="#2-2-硬件编程语言" class="headerlink" title="2.2 硬件编程语言"></a>2.2 硬件编程语言</h3><p><code>add a,b,c</code>  将变量<code>b</code>，<code>c</code>相加后放入<code>a</code>中</p>
 <p>每个 RISC-V 指令 只执行一个操作，最多允许三个变量</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;例1 a &#x3D; b+c+d+e</span><br><span class="line">add a,b,c</span><br><span class="line">add a,a,d</span><br><span class="line">add a,a,e</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;例1 a &#x3D; b+c+d+e
+add a,b,c
+add a,a,d
+add a,a,e<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <p>设计理念1 ：简单有利于规整化</p>
 </blockquote>
@@ -541,24 +544,38 @@
 <p>寄存器表示方法 = X + 数字</p>
 <p>寄存器的容量是有限的，当需要大的数据结构时，就需要存储在内存中，内存相比于寄存器要大的多，但是访问速度也有数量级的差距。</p>
 <p>但算术指令只能操作寄存器，所以我们要先将内存中的数据读入寄存器，进行操作后，再存回内存中，其中 内存-》寄存器 称为 load，寄存器-》内存 称为 store</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#例子2 ： g&#x3D;h+A[8] A为大64位数据 编译器分配 g-X20 h-X21 A的基址存在X22</span><br><span class="line"></span><br><span class="line">ld x9, 8(x22) &#x2F;&#x2F; 临时寄存器 x9 得到 A[8]</span><br><span class="line">add x20,x21,x9 &#x2F;&#x2F; g &#x3D; h + A[8]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">#例子2 ： g&#x3D;h+A[8] A为大64位数据 编译器分配 g-X20 h-X21 A的基址存在X22
+
+ld x9, 8(x22) &#x2F;&#x2F; 临时寄存器 x9 得到 A[8]
+add x20,x21,x9 &#x2F;&#x2F; g &#x3D; h + A[8]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <p><code>8(x22)</code> 为一种内存表示法，8是偏移量，x22 存储了A数组的基址</p>
 <p>现在大部分结构仍然采用 字节 寻址的方式，RISC-V也不例外；所以寄存器和内存都表示为0x8，0x10，0x18 等</p>
 <p>在 64bit 中 byte 的排序问题，一般有两种方式： 大端-从大到小，小端-从小到大</p>
 <p>RISC-V 采用小端寻址的方式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#例子3 A[12]&#x3D;h+A[8]</span><br><span class="line">ld  x9,64(x22)</span><br><span class="line">add x9,x21,x9</span><br><span class="line">sd  x9,96(x22)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">#例子3 A[12]&#x3D;h+A[8]
+ld  x9,64(x22)
+add x9,x21,x9
+sd  x9,96(x22)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <p>这种平凡的访问内存的行为称为 寄存器溢出</p>
 <h4 id="常量-和-立即数"><a href="#常量-和-立即数" class="headerlink" title="常量 和 立即数"></a>常量 和 立即数</h4><p>RISC-V 将近一半的指令需要操作 立即数 或 常量</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 例4 ： x22+4</span><br><span class="line">ld  x9,AddConstant 4(x3) &#x2F;&#x2F; x9 &#x3D; constant 4</span><br><span class="line">add x22,x22,x9</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly"># 例4 ： x22+4
+ld  x9,AddConstant 4(x3) &#x2F;&#x2F; x9 &#x3D; constant 4
+add x22,x22,x9<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>程序编译后会将常量4 写入内存中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 例5：立即数指令</span><br><span class="line">addi x22,x22,4 &#x2F;&#x2F;x22&#x3D;x22+4</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly"># 例5：立即数指令
+addi x22,x22,4 &#x2F;&#x2F;x22&#x3D;x22+4<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>注意: 对于常用的常量0 ， RISC-V 将 <code>0</code> 固定放入 <code>x0</code> 中</p>
 <h3 id="2-5-指令表示"><a href="#2-5-指令表示" class="headerlink" title="2.5 指令表示"></a>2.5 指令表示</h3><p><img src="https://upload-images.jianshu.io/upload_images/18610675-d358b3032c45c963.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/750/format/webp" alt="指令表示"></p>
 <h3 id="2-6-逻辑指令"><a href="#2-6-逻辑指令" class="headerlink" title="2.6 逻辑指令"></a>2.6 逻辑指令</h3><p><code>左移</code> <code>右移</code> <code>AND</code> <code>OR</code> <code>XOR</code> <code>NOT</code> 等</p>
 <h3 id="2-7-分支指令"><a href="#2-7-分支指令" class="headerlink" title="2.7 分支指令"></a>2.7 分支指令</h3><p>两个主要指令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 如果相等则继续</span><br><span class="line">beq rs1,rs2,L1</span><br><span class="line">&#x2F;&#x2F; 如果不等则继续</span><br><span class="line">bne rs1,rs2,L1</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">&#x2F;&#x2F; 如果相等则继续
+beq rs1,rs2,L1
+&#x2F;&#x2F; 如果不等则继续
+bne rs1,rs2,L1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <h4 id="例6"><a href="#例6" class="headerlink" title="例6"></a>例6</h4><p>如何将以下c语言编译为RISC-V格式</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// c 语言</span></span><br><span class="line"><span class="keyword">if</span>(i==j) f=g+h; </span><br><span class="line"><span class="keyword">else</span> f = g-h;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token comment">// c 语言</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span>i<span class="token operator">==</span>j<span class="token punctuation">)</span> f<span class="token operator">=</span>g<span class="token operator">+</span>h<span class="token punctuation">;</span> 
+<span class="token keyword">else</span> f <span class="token operator">=</span> g<span class="token operator">-</span>h<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <table>
 <thead>
 <tr>
@@ -577,8 +594,12 @@
 <td>x23</td>
 </tr>
 </tbody></table>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; RISC - V </span><br><span class="line">bne x22,x23,Else</span><br><span class="line">add x19,x20,x21</span><br><span class="line">Else: sub x19,x20,x21</span><br><span class="line">Exit:</span><br></pre></td></tr></table></figure>
-<h4 id="例7-loops"><a href="#例7-loops" class="headerlink" title="例7 - loops"></a>例7 - loops</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(save[i]==k) i+=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">&#x2F;&#x2F; RISC - V 
+bne x22,x23,Else
+add x19,x20,x21
+Else: sub x19,x20,x21
+Exit:<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="例7-loops"><a href="#例7-loops" class="headerlink" title="例7 - loops"></a>例7 - loops</h4><pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">while</span><span class="token punctuation">(</span>save<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token operator">==</span>k<span class="token punctuation">)</span> i<span class="token operator">+=</span><span class="token number">1</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <table>
 <thead>
 <tr>
@@ -593,12 +614,19 @@
 <td>x25</td>
 </tr>
 </tbody></table>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Loop: slli x10,x22,3 # x10 &#x3D; i*8 左移三位</span><br><span class="line">add x10,x10,x25 # x10 &#x3D; save[i]的地址</span><br><span class="line">ld  x9,0(x10) # x9 &#x3D; save[i]的值</span><br><span class="line">bne x9,x24 Exit #如果 save[i]！&#x3D;k 退出</span><br><span class="line">addi x22,x22,1 # i&#x3D;i+1</span><br><span class="line">beq x0,x0,Loop #回到开始</span><br><span class="line">Exit:</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">Loop: slli x10,x22,3 # x10 &#x3D; i*8 左移三位
+add x10,x10,x25 # x10 &#x3D; save[i]的地址
+ld  x9,0(x10) # x9 &#x3D; save[i]的值
+bne x9,x24 Exit #如果 save[i]！&#x3D;k 退出
+addi x22,x22,1 # i&#x3D;i+1
+beq x0,x0,Loop #回到开始
+Exit:<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>名词解释：</strong>  基本块（ basic block）</p>
 <p>基本块就是一系列除了结尾就没有分支，除了开始姐们为分支标签的语句，通俗来说，只要基本块中第一条指令被执行了，那么基本块内所有执行都会按照<strong>顺序</strong>仅<strong>执行一次</strong> 。编译的第一步就是将程序分成基本块</p>
 <h4 id="其他分支语句"><a href="#其他分支语句" class="headerlink" title="其他分支语句"></a>其他分支语句</h4><p><code>blt</code>   和  <code>bge</code>   将寄存器的值当做    补码    进行比较</p>
 <p><code>bltu</code> 和 <code>bgeu</code> 将寄存器的值当作无符号数进行比较</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># if x20&gt;&#x3D;x11 or if x20 negative</span><br><span class="line">bgeu x20,x11,IndexOutOfBounds</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly"># if x20&gt;&#x3D;x11 or if x20 negative
+bgeu x20,x11,IndexOutOfBounds<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <h3 id="2-8-计算机硬件对过程的支持"><a href="#2-8-计算机硬件对过程的支持" class="headerlink" title="2.8 计算机硬件对过程的支持"></a>2.8 计算机硬件对过程的支持</h3><p><strong>过程</strong>或者<strong>函数</strong>是用来结构化程序的工具，使用过程能够让程序变得易读且增强代码的重用性，程序员只需要关注任务的一部分。参数可以用来传递和返回值，可以用作过程和其他程序的接口。我们可以认为过程就像一个执行秘密任务的间谍，获取所需资源、执行任务、掩盖行踪，最后带着结果回到原处。任务完成后就不再干涉其他任务。同样我们可以将过程的执行分为六步 :</p>
 <ol>
 <li> 将参数放在过程能访问的地方</li>
@@ -614,22 +642,43 @@
 <li><code>x1</code> : 存储过程调用源点的地址</li>
 </ul>
 <p>除了分配了这些寄存器，RISC-V提供了一条跳转链接指令jal。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jal ProcedureAddress</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">jal ProcedureAddress<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>jal ： 跳转 并 连接 程序结构，主要完成</p>
 <ul>
 <li>跳转到<code>ProcedureAddress</code>继续执行</li>
 <li>将<code>ProcedureAddress</code> 保存到 <code>x1</code> 寄存器</li>
 </ul>
 <p>被执行的过程取到x1地址，并继续执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jalr x0,0(x1)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">jalr x0,0(x1)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>或 直接进行无条件跳转</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jal x0,Label</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">jal x0,Label<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <hr>
 <p>如果一个过程需要用到多个寄存器，使用完成后还需要恢复，存储多个值是，就需要使用<strong>堆栈</strong></p>
 <p>例如</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="title">leaf_example</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> g,<span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> h,</span></span></span><br><span class="line"><span class="function"><span class="params">                           <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> i,<span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> j)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> f;</span><br><span class="line">    f=(g+h)-(i+j);</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> <span class="token function">leaf_example</span><span class="token punctuation">(</span><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> g<span class="token punctuation">,</span><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> h<span class="token punctuation">,</span>
+                           <span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> i<span class="token punctuation">,</span><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> j<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> f<span class="token punctuation">;</span>
+    f<span class="token operator">=</span><span class="token punctuation">(</span>g<span class="token operator">+</span>h<span class="token punctuation">)</span><span class="token operator">-</span><span class="token punctuation">(</span>i<span class="token operator">+</span>j<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> f<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>翻译为汇编语言</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">leaf_example:</span><br><span class="line">addi sp,sp,-24</span><br><span class="line">sd x5,16(sp)</span><br><span class="line">sd x6,8(sp)</span><br><span class="line">sd x20,0(sp)</span><br><span class="line"></span><br><span class="line">add x5,x10,x11</span><br><span class="line">add x6,x12,x13</span><br><span class="line">sub x20,x5,x6</span><br><span class="line">addi x10,x20,0</span><br><span class="line"></span><br><span class="line">ld x20,0(sp)</span><br><span class="line">ld x6,8(sp)</span><br><span class="line">ld x5,16(sp)</span><br><span class="line">addi sp,sp,24</span><br><span class="line">jaalr x0,0(x1)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">leaf_example:
+addi sp,sp,-24
+sd x5,16(sp)
+sd x6,8(sp)
+sd x20,0(sp)
+
+add x5,x10,x11
+add x6,x12,x13
+sub x20,x5,x6
+addi x10,x20,0
+
+ld x20,0(sp)
+ld x6,8(sp)
+ld x5,16(sp)
+addi sp,sp,24
+jaalr x0,0(x1)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>其中  <strong>g/h/i/j对应x10/x11/x12/x13，f对应x20</strong></p>
 <h4 id="寄存器分类"><a href="#寄存器分类" class="headerlink" title="寄存器分类"></a>寄存器分类</h4><p>RISC-V 将 19 个临时寄存器分为两类</p>
 <ul>
@@ -639,8 +688,37 @@
 <p>所以  line3/4/13/14 store和load 的操作可以省去</p>
 <h4 id="嵌套程序"><a href="#嵌套程序" class="headerlink" title="嵌套程序"></a>嵌套程序</h4><p>如果程序 调用其他的函数，我们很好理解，但是 如果调用自己，形成递归过程，我们就要特殊注意了</p>
 <p><strong>例子 ： 递归</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="title">fact</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> n)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(n&lt;<span class="number">1</span>) </span><br><span class="line">      <span class="keyword">return</span>(<span class="number">1</span>)</span><br><span class="line">  <span class="keyword">else</span> </span><br><span class="line">      <span class="keyword">return</span> (n*fact(n<span class="number">-1</span>))</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//parameter n存在x10中</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">FACT:</span><br><span class="line">  addi sp,sp,-16   &#x2F;&#x2F;adjust stack for 2 items</span><br><span class="line">      sd   x1,8(sp)    &#x2F;&#x2F;save the return address</span><br><span class="line">      sd   x10,0(sp)   &#x2F;&#x2F;save the argument n</span><br><span class="line"></span><br><span class="line">      addi x5,x10,-1   &#x2F;&#x2F;x5&#x3D;n-1</span><br><span class="line">      bge  x5,x0,L1    &#x2F;&#x2F;if(n-1)&gt;&#x3D;0,go to L1</span><br><span class="line"></span><br><span class="line">      addi x10,x0,1    &#x2F;&#x2F;return 1</span><br><span class="line">      addi sp,sp,16    &#x2F;&#x2F;pop 2 items off stack</span><br><span class="line">      jalr x0,0(x1)    &#x2F;&#x2F;return to caller</span><br><span class="line"></span><br><span class="line">L1: </span><br><span class="line">  addi x10,x10,-1  &#x2F;&#x2F;n&gt;&#x3D;1: argument gets(n-1)</span><br><span class="line">      jal  x1,FACT     &#x2F;&#x2F;call fact with(n-1)</span><br><span class="line"></span><br><span class="line">      addi x6,x10,0    &#x2F;&#x2F;return from jal:move result of fact(n-1) to x6</span><br><span class="line">      ld   x10,0(sp)   &#x2F;&#x2F;restore argument n</span><br><span class="line">      ld   x1,8(sp)    &#x2F;&#x2F;restore the return address</span><br><span class="line">      addi sp,sp,16    &#x2F;&#x2F;adjust stack point to pop 2 items</span><br><span class="line"></span><br><span class="line">      mul  x10,x10,x6  &#x2F;&#x2F;return n*fact(n-1)</span><br><span class="line">      jalr x0,0(x1)    &#x2F;&#x2F;return to the caller </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> <span class="token function">fact</span><span class="token punctuation">(</span><span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token keyword">int</span> n<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>n<span class="token operator">&lt;</span><span class="token number">1</span><span class="token punctuation">)</span> 
+      <span class="token keyword">return</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+  <span class="token keyword">else</span> 
+      <span class="token keyword">return</span> <span class="token punctuation">(</span>n<span class="token operator">*</span><span class="token function">fact</span><span class="token punctuation">(</span>n<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span>
+<span class="token comment">//parameter n存在x10中</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">FACT:
+  addi sp,sp,-16   &#x2F;&#x2F;adjust stack for 2 items
+      sd   x1,8(sp)    &#x2F;&#x2F;save the return address
+      sd   x10,0(sp)   &#x2F;&#x2F;save the argument n
+
+      addi x5,x10,-1   &#x2F;&#x2F;x5&#x3D;n-1
+      bge  x5,x0,L1    &#x2F;&#x2F;if(n-1)&gt;&#x3D;0,go to L1
+
+      addi x10,x0,1    &#x2F;&#x2F;return 1
+      addi sp,sp,16    &#x2F;&#x2F;pop 2 items off stack
+      jalr x0,0(x1)    &#x2F;&#x2F;return to caller
+
+L1: 
+  addi x10,x10,-1  &#x2F;&#x2F;n&gt;&#x3D;1: argument gets(n-1)
+      jal  x1,FACT     &#x2F;&#x2F;call fact with(n-1)
+
+      addi x6,x10,0    &#x2F;&#x2F;return from jal:move result of fact(n-1) to x6
+      ld   x10,0(sp)   &#x2F;&#x2F;restore argument n
+      ld   x1,8(sp)    &#x2F;&#x2F;restore the return address
+      addi sp,sp,16    &#x2F;&#x2F;adjust stack point to pop 2 items
+
+      mul  x10,x10,x6  &#x2F;&#x2F;return n*fact(n-1)
+      jalr x0,0(x1)    &#x2F;&#x2F;return to the caller 
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>​     注意jal、jalr，ld 等指令指挥这指令跳来跳去，并且将stack的参数一步步的推出；</p>
 <p>C语言变量可以按照2类分：</p>
 <ul>
@@ -774,7 +852,8 @@
 </tbody></table>
 <h3 id="2-9-人机交互"><a href="#2-9-人机交互" class="headerlink" title="2.9 人机交互"></a>2.9 人机交互</h3><p>计算机如何显示呢，通常使用8bit的ASCII码；</p>
 <p>为了方便字符操作，RISC-V提供了两个汇编指令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lbu x12,0(x10) # 读</span><br><span class="line">sb x12,0(x11)  # 写</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">lbu x12,0(x10) # 读
+sb x12,0(x11)  # 写<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p><code>lbu: </code>无符号加载数据,将字节加载到目的寄存器的最右端；</p>
 <p> <code>sb:</code>  保存字节,将最右侧的字节存入内存；</p>
 <p><strong>string有3种表示方式：</strong></p>
@@ -784,7 +863,8 @@
 <li>最后用一个特殊字符表示string结束； - C</li>
 </ol>
 <p>RISC-V需要使用load/store 半个机器字指令来load和store一个字符；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lhu x19,0(x10) &#x2F;&#x2F;Read halfword from source</span><br><span class="line">sh  x10,0(x11)  &#x2F;&#x2F;Write halfword to destination</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">lhu x19,0(x10) &#x2F;&#x2F;Read halfword from source
+sh  x10,0(x11)  &#x2F;&#x2F;Write halfword to destination<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <h3 id="2-10-RISC-V-对于大立即数和-地址-的处理方法"><a href="#2-10-RISC-V-对于大立即数和-地址-的处理方法" class="headerlink" title="2.10 RISC-V 对于大立即数和 地址 的处理方法"></a>2.10 RISC-V 对于大立即数和 地址 的处理方法</h3><h3 id="2-11-并行-和-指令-：-同步"><a href="#2-11-并行-和-指令-：-同步" class="headerlink" title="2.11 并行 和 指令 ： 同步"></a>2.11 并行 和 指令 ： 同步</h3><p>数据竞争 ： 两个程序 访问同一个数据，一个未写完，一个已经开始读</p>
 <blockquote>
 <p>同步机制通常是由用户级软件例程构建的，这些例程依赖于硬件提供的同步指令</p>
@@ -795,7 +875,13 @@
 <p>以atomic exchange/atomic swap为例，它主要完成两个存储之间的数值交换；</p>
 <p> Lock = <strong>0</strong>表示unlock，Lock = <strong>1</strong>则表示lock；</p>
 <p> 从而引出lr.d(读取双保留字)和sc.d(存储有条件的双字)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">        addi x12,x0,1       &#x2F;&#x2F;copy locked value</span><br><span class="line">again:  lr.d x10,(x20)      &#x2F;&#x2F;load-reserved to read lock</span><br><span class="line">        bne  x10,x0,again   &#x2F;&#x2F;check if it is 0 yet</span><br><span class="line">        sc.d x11,x12,(x20)  &#x2F;&#x2F;attempt to store new value</span><br><span class="line">        bne  x11,x0,again   &#x2F;&#x2F;branch if store fails</span><br><span class="line"></span><br><span class="line">        sd x0,0(x20)        &#x2F;&#x2F;free lock by writing 0</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly">        addi x12,x0,1       &#x2F;&#x2F;copy locked value
+again:  lr.d x10,(x20)      &#x2F;&#x2F;load-reserved to read lock
+        bne  x10,x0,again   &#x2F;&#x2F;check if it is 0 yet
+        sc.d x11,x12,(x20)  &#x2F;&#x2F;attempt to store new value
+        bne  x11,x0,again   &#x2F;&#x2F;branch if store fails
+
+        sd x0,0(x20)        &#x2F;&#x2F;free lock by writing 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="2-12-编译-和-连接-程序"><a href="#2-12-编译-和-连接-程序" class="headerlink" title="2.12 编译 和  连接 程序"></a>2.12 编译 和  连接 程序</h3><p>本节主要讲从磁盘一段C语言文件到计算机可以执行的程序之间的4个步骤：</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/18610675-031b6a1271e0666f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/928/format/webp" alt="img"></p>
 <p><strong>Compiler</strong></p>
@@ -1093,16 +1179,16 @@
                 
                 <div class="card-action article-tags">
                     
+                    <a href="/tags/risc-v/">
+                        <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
                     <a href="/tags/rCore/">
                         <span class="chip bg-color">rCore</span>
                     </a>
                     
                     <a href="/tags/OS/">
                         <span class="chip bg-color">OS</span>
-                    </a>
-                    
-                    <a href="/tags/risc-v/">
-                        <span class="chip bg-color">risc-v</span>
                     </a>
                     
                 </div>
@@ -1146,16 +1232,16 @@
                 
                 <div class="card-action article-tags">
                     
+                    <a href="/tags/risc-v/">
+                        <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
                     <a href="/tags/rCore/">
                         <span class="chip bg-color">rCore</span>
                     </a>
                     
                     <a href="/tags/OS/">
                         <span class="chip bg-color">OS</span>
-                    </a>
-                    
-                    <a href="/tags/risc-v/">
-                        <span class="chip bg-color">risc-v</span>
                     </a>
                     
                 </div>
@@ -1580,6 +1666,6 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</body>
 
 </html>

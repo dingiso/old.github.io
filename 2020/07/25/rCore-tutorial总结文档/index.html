@@ -431,16 +431,16 @@
                     
                     <div class="article-tag">
                         
+                            <a href="/tags/risc-v/">
+                                <span class="chip bg-color">risc-v</span>
+                            </a>
+                        
                             <a href="/tags/rCore/">
                                 <span class="chip bg-color">rCore</span>
                             </a>
                         
                             <a href="/tags/OS/">
                                 <span class="chip bg-color">OS</span>
-                            </a>
-                        
-                            <a href="/tags/risc-v/">
-                                <span class="chip bg-color">risc-v</span>
                             </a>
                         
                     </div>
@@ -512,8 +512,9 @@
 <li><p>通过<code>sbi_call</code> 可以预约下一次的时钟中断,<code>time</code>参数就是中断时间</p>
 </li>
 <li><p>总结 时钟中断的调用过程</p>
-<img src="https://github.com/dingiso/DailySchedule/blob/master/img/TimeInterrupt.png" alt="时钟中断">
-## lab-2 简单总结</li>
+<img src="https://github.com/dingiso/DailySchedule/blob/master/img/TimeInterrupt.png"  alt="时钟中断" />
+## lab-2 简单总结
+</li>
 <li><p>对于动态内存分配，我们需要实例一个<code>堆</code>对象，而这个对象必须具有以下特征</p>
 <ul>
 <li>实现 <code>Trait GlobalAlloc</code> 的分配功能<ul>
@@ -540,7 +541,7 @@
 </ul>
 </li>
 <li><p>针对所有的物理页，我们实现了一个物理页分配器封装对页的操作</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">static</span> <span class="keyword">ref</span> FRAME_ALLOCATOR: Mutex&lt;FrameAllocator&lt;AllocatorImpl&gt;&gt; = Mutex::new(FrameAllocator::new(Range::from(PhysicalPageNumber::ceil(PhysicalAddress::from(*KERNEL_END_ADDRESS))..PhysicalPageNumber::floor(MEMORY_END_ADDRESS),)));</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-rust" data-language="rust"><code class="language-rust"><span class="token keyword">pub</span> <span class="token keyword">static</span> <span class="token keyword">ref</span> <span class="token constant">FRAME_ALLOCATOR</span><span class="token punctuation">:</span> <span class="token class-name">Mutex</span><span class="token operator">&lt;</span><span class="token class-name">FrameAllocator</span><span class="token operator">&lt;</span><span class="token class-name">AllocatorImpl</span><span class="token operator">>></span> <span class="token operator">=</span> <span class="token class-name">Mutex</span><span class="token punctuation">::</span><span class="token function">new</span><span class="token punctuation">(</span><span class="token class-name">FrameAllocator</span><span class="token punctuation">::</span><span class="token function">new</span><span class="token punctuation">(</span><span class="token class-name">Range</span><span class="token punctuation">::</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token class-name">PhysicalPageNumber</span><span class="token punctuation">::</span><span class="token function">ceil</span><span class="token punctuation">(</span><span class="token class-name">PhysicalAddress</span><span class="token punctuation">::</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token constant">KERNEL_END_ADDRESS</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">..</span><span class="token class-name">PhysicalPageNumber</span><span class="token punctuation">::</span><span class="token function">floor</span><span class="token punctuation">(</span><span class="token constant">MEMORY_END_ADDRESS</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p><strong><code>Mutex&lt;FrameAllocator&lt;AllocatorImpl&gt;&gt;</code></strong> </p>
 <ul>
 <li><p><code>Mutex</code>对分配器加锁防止多个线程访问，</p>
@@ -576,7 +577,13 @@
 <li><p> 更改 linker.ld 的数据存放起址改为虚拟地址，并在各字段加入对齐，使得一个虚拟页不会有两个段。目的是为了可以对每一个段赋予不同的属性</p>
 </li>
 <li><p>entry.asm 中利用  下面代码使得 CPU模式 变为 Sv39</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 8 &lt;&lt; 60 是 satp 中使用 Sv39 模式的记号</span><br><span class="line">    li t1, (8 &lt;&lt; 60)</span><br><span class="line">    or t0, t0, t1</span><br><span class="line">    # 写入 satp 并更新 TLB</span><br><span class="line">    csrw satp, t0</span><br></pre></td></tr></table></figure></li>
+<pre class="line-numbers language-assembly" data-language="assembly"><code class="language-assembly"># 8 &lt;&lt; 60 是 satp 中使用 Sv39 模式的记号
+    li t1, (8 &lt;&lt; 60)
+    or t0, t0, t1
+    # 写入 satp 并更新 TLB
+    csrw satp, t0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+</li>
 <li><p>给出内核使用线性映射的偏移量 并 在 entry.asm 中 建立一个boot_page_table 作为初始页表，</p>
 <ul>
 <li>第一个映射是 0x8000_0000 -&gt; 0x8000_0000 VPN3 是 10B 所以放在第三位</li>
@@ -630,14 +637,12 @@
 </li>
 </ul>
 </li>
-<li><p> <strong>进程： Process</strong> | 资源调度的基本单位，只需要保存自身属性和 线程共享页表，内存空间即可</p>
-</li>
-</ol>
+<li><p><strong>进程： Process</strong> | 资源调度的基本单位，只需要保存自身属性和 线程共享页表，内存空间即可</p>
 <ul>
 <li>属于 用户态 还是 内核态</li>
 <li>共用的 一块 内存空间，页表</li>
 </ul>
-<ol start="3">
+</li>
 <li><p><strong>线程管理器：Processor</strong> | 存放和管理所有的线程，主要包括：</p>
 <ul>
 <li>正在执行的线程</li>
@@ -676,17 +681,21 @@
 </li>
 <li><p>实际的做法: 定义<code>kernel_stack</code>分配空间，<code>interrupt.asm</code>中对<code>sscratch</code>操作</p>
 <ul>
-<li>为内核栈分配一段空间</li>
-<li>运行线程时，将内核栈指针保存在<code>sscratch</code>寄存器中</li>
-<li>中断时，则从将 <code>Context</code> 压入 <code>sscratch</code> 指向的栈中（<code>Context</code> 的地址为 <code>sscratch - size_of::&lt;Context&gt;()</code>），同时用新的栈地址来替换 <code>sp</code>（此时 <code>sp</code> 也会被复制到 <code>a0</code> 作为 <code>handle_interrupt</code> 的参数）</li>
-<li>从中断中返回时（<code>__restore</code> 时），<code>a0</code> 应指向**被压在内核栈中的 <code>Context</code>**。此时出栈 <code>Context</code> 并且将栈顶保存到 <code>sscratch</code> 中</li>
+<li><p>为内核栈分配一段空间</p>
+</li>
+<li><p>运行线程时，将内核栈指针保存在<code>sscratch</code>寄存器中</p>
+</li>
+<li><p>中断时，则从将 <code>Context</code> 压入 <code>sscratch</code> 指向的栈中（<code>Context</code> 的地址为 <code>sscratch - size_of::&lt;Context&gt;()</code>），同时用新的栈地址来替换 <code>sp</code>（此时 <code>sp</code> 也会被复制到 <code>a0</code> 作为 <code>handle_interrupt</code> 的参数）</p>
+</li>
+<li><p>从中断中返回时（<code>__restore</code> 时），<code>a0</code> 应指向**被压在内核栈中的 <code>Context</code>**。此时出栈 <code>Context</code> 并且将栈顶保存到 <code>sscratch</code> 中</p>
+<p>运行时如何 将内核栈指针保存在<code>sscratch</code>中?</p>
+</li>
 </ul>
-<p> 运行时如何 将内核栈指针保存在<code>sscratch</code>中?</p>
 </li>
 </ul>
 </li>
 </ol>
-<img src="https://github.com/dingiso/DailySchedule/blob/master/img/sscratch.png" alt="sscratch">
+<img src="https://github.com/dingiso/DailySchedule/blob/master/img/sscratch.png"  alt="sscratch" />
 
 <h2 id="lab-5"><a href="#lab-5" class="headerlink" title="lab-5"></a>lab-5</h2><ol>
 <li><p>不能一直运行内核 ，我们要实现把读取存储设备的数据，<strong>OpenSBI</strong> 进行扫描并设备通过<strong>MMIO</strong>映射到物理内存的一块了，我们只需要在rust_main 中添加参数，OpenSBI 就会告诉我们映射的地址</p>
@@ -696,14 +705,12 @@
 </li>
 </ul>
 </li>
-<li><p> 通过调用 rcore 中的 属性解析<code>device_tree</code>库，我们得到的便是一个 建好的树  - <strong>设备树</strong></p>
-</li>
-</ol>
+<li><p>通过调用 rcore 中的 属性解析<code>device_tree</code>库，我们得到的便是一个 建好的树  - <strong>设备树</strong></p>
 <ul>
 <li>通过 递归 从根节点进行递归 ，发现支持 <code>&quot;virtio,mmio&quot;</code> ， 就可以加载他的驱动</li>
 <li>初始化设备 时需要进行验证<code>Magic Number</code> ， 确定其为设备树</li>
 </ul>
-<ol start="3">
+</li>
 <li><p>进一步对节点进行判断， 只读取其中的 <code>Block</code> 块设备</p>
 <ul>
 <li>粒度 为 整<strong>块</strong>，以块为单位读写，（类比硬盘）</li>
@@ -722,14 +729,16 @@
 </ul>
 </li>
 <li><p>对块设备的抽象，基本为实现上述 的 三个接口。</p>
-</li>
-</ol>
-  <img src="https://github.com/dingiso/DailySchedule/blob/master/img/design.png" alt="design">
+<img src="https://github.com/dingiso/DailySchedule/blob/master/img/design.png"  alt="design" />
 
-<ol start="7">
-<li> 文件系统 利用 rcore-fs 通过查找全部设备驱动中的第一个存储设备作为根目录。</li>
-<li>同时调用<code>BlockCache::new()</code> 使得设备在内存中具有<code>cache</code></li>
-<li>最后 通过 调用 以实现的接口中的 <code>ls</code> 进行 文件名的输出</li>
+
+</li>
+<li><p> 文件系统 利用 rcore-fs 通过查找全部设备驱动中的第一个存储设备作为根目录。</p>
+</li>
+<li><p>同时调用<code>BlockCache::new()</code> 使得设备在内存中具有<code>cache</code></p>
+</li>
+<li><p>最后 通过 调用 以实现的接口中的 <code>ls</code> 进行 文件名的输出</p>
+</li>
 </ol>
 <h2 id="lab-6"><a href="#lab-6" class="headerlink" title="lab-6"></a>lab-6</h2><ol>
 <li><p>建立 <code>user</code> crate，作为用户程序的放置位置 - 并为其去除依赖</p>
@@ -833,16 +842,16 @@
                     
                         <div class="article-tag">
                             
+                                <a href="/tags/risc-v/">
+                                    <span class="chip bg-color">risc-v</span>
+                                </a>
+                            
                                 <a href="/tags/rCore/">
                                     <span class="chip bg-color">rCore</span>
                                 </a>
                             
                                 <a href="/tags/OS/">
                                     <span class="chip bg-color">OS</span>
-                                </a>
-                            
-                                <a href="/tags/risc-v/">
-                                    <span class="chip bg-color">risc-v</span>
                                 </a>
                             
                         </div>
@@ -1048,12 +1057,12 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/OS/">
-                        <span class="chip bg-color">OS</span>
-                    </a>
-                    
                     <a href="/tags/risc-v/">
                         <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
+                    <a href="/tags/OS/">
+                        <span class="chip bg-color">OS</span>
                     </a>
                     
                     <a href="/tags/zCore/">
@@ -1101,16 +1110,16 @@
                 
                 <div class="card-action article-tags">
                     
+                    <a href="/tags/risc-v/">
+                        <span class="chip bg-color">risc-v</span>
+                    </a>
+                    
                     <a href="/tags/rCore/">
                         <span class="chip bg-color">rCore</span>
                     </a>
                     
                     <a href="/tags/OS/">
                         <span class="chip bg-color">OS</span>
-                    </a>
-                    
-                    <a href="/tags/risc-v/">
-                        <span class="chip bg-color">risc-v</span>
                     </a>
                     
                 </div>
@@ -1535,6 +1544,6 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</body>
 
 </html>

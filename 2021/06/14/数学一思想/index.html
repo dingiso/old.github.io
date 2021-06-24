@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Gem5 演讲稿, good">
+    <meta name="keywords" content="数学一思想, good">
     <meta name="description" content="Dingisoul&#39;s blog">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Gem5 演讲稿 | Dingisoul</title>
+    <title>数学一思想 | Dingisoul</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Gem5 演讲稿</h1>
+                    <h1 class="description center-align post-title">数学一思想</h1>
                 </div>
             </div>
         </div>
@@ -431,16 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/sim/">
-                                <span class="chip bg-color">sim</span>
-                            </a>
-                        
-                            <a href="/tags/gem5/">
-                                <span class="chip bg-color">gem5</span>
-                            </a>
-                        
-                            <a href="/tags/risc-v/">
-                                <span class="chip bg-color">risc-v</span>
+                            <a href="/tags/Math/">
+                                <span class="chip bg-color">Math</span>
                             </a>
                         
                     </div>
@@ -455,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-01-13
+                    2021-06-14
                 </div>
                 
 
@@ -479,32 +471,19 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>本文是 gem5 视频搭配的演讲稿的部分内容<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV155411J7gY?from=search&seid=12575992805936022279">视频地址</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/isrc-cas/PLCT-Open-Reports/blob/master/20210120-Gem5-LuRuibo.pdf">slides地址</a></p>
+                <p>本篇文章主要记录数学一中学习过程中迸发的思想</p>
 <a id="more"></a>
 
-<h1 id="Gem5-演讲稿"><a href="#Gem5-演讲稿" class="headerlink" title="Gem5 演讲稿"></a>Gem5 演讲稿</h1><h3 id="Atomic"><a href="#Atomic" class="headerlink" title="Atomic"></a>Atomic</h3><ol>
-<li><strong>计时</strong>-计时访问是最详细的访问。它们反映了我们为实现实际时间所做的最大努力，并包括排队延迟和资源争用的建模。一旦在将来的某个时间点成功发送了计时请求，则发送请求的设备将无法获得响应，或者如果无法完成请求，则将获得NACK（以下更多内容）。定时和原子访问不能在内存系统中共存。</li>
-<li><strong>原子</strong>访问-原子访问比详细访问要快。它们用于快速转发和预热缓存，并返回大约时间来完成请求，而不会引起任何资源争用或排队延迟。发送原子访问后，将在函数返回时提供响应。原子和定时访问不能在内存系统中共存。</li>
-<li><strong>功能性</strong>-与原子性访问一样，功能性访问是瞬间发生的，但是与原子性访问不同，它们可以与原子性或定时访问共存于存储系统中。功能性访问用于诸如加载二进制文件，检查/更改模拟系统中的变量以及允许将远程调试器附加到模拟器之类的事情。重要说明是设备接收到功能访问时，如果它包含一个数据包队列，则必须在所有数据包中搜索该功能访问正在执行的请求或响应，并且必须对其进行适当更新。该<code>Packet::intersect()</code>和<code>fixPacket()</code>方法可以帮助这一点。</li>
-</ol>
-<h3 id="O3-Cpu"><a href="#O3-Cpu" class="headerlink" title="O3 Cpu"></a>O3 Cpu</h3><p>Fetch：在每个周期获取指令，并根据所选策略选择要从哪个线程获取信息。在此阶段，首先创建DynInst。还处理分支预测。</p>
-<p>Decode:  处理PC相关的无条件分支的处理</p>
-<p>Rename：利用PR File,两种情况会终止： 没有足够寄存器来重命名，后续资源已经用完(序列化指令 )</p>
-<p>IEW ： 将指令分派给指令队列，告诉指令队列发出指令，执行并写回指令</p>
-<p>Commit: 处理指令可能引起的任何故障。还可以在分支预测错误的情况下处理重定向前端。</p>
-<p>E in E : 最后执行存在潜在的错误，这些错误不会在程序结果中显示。其次，通过在流水线的开始执行，指令全部按顺序执行，那么乱序的load interaction负载交互会丢失。我们的模型能够避免这些因流水线设计产生的不足并提供准确的时序模型。</p>
-<p>Template Policy: 利用模板来实现多态性，主要是利用 Impl 定义类，优点是不需要传统虚拟函数/基类。主要缺点是必须在编译时完全定义CPU，并且模板化的类需要手动实例化。</p>
-<p>ISA 独立性： 将代码分为 与 ISA 无关和ISA有关的代码，提高复用性</p>
-<p>分支预测：分支是错误时，通知 commit stage 压缩ROB内不用的代码</p>
-<h3 id="CLassic-Memory-System"><a href="#CLassic-Memory-System" class="headerlink" title="CLassic Memory System"></a>CLassic Memory System</h3><p><strong>MOESI:</strong>  数据一致性协议 Owned 状态省一次读</p>
-<p>express snoops: 原子的，能瞬间返回，在时序模式也可以使用，防止泛洪</p>
-<p>cache： 内存映射数据包和侦听数据包。内存映射的请求在内存层次结构中向下，而响应在内存层次结构中向上（相同的路由返回）。侦听请求在缓存层次结构中沿水平方向移动，侦听响应在层次结构中沿水平方向向下（相同的路由返回）。普通监听在水平方向上运行，而快速监听则在缓存层次结构中。</p>
-<h3 id="Ruby"><a href="#Ruby" class="headerlink" title="Ruby"></a>Ruby</h3><p>SLICC :  代表用于<em>实现缓存一致性的规范语言</em>。本质上，缓存一致性协议的行为类似于状态机。SLICC用于指定状态机的行为。并可施加某种约束。例如，SLICC可以限制单个循环中可能发生的转换数量。除了协议规范外，SLICC还将内存模型中的某些组件组合在一起。如下图所示，状态机从互连网络的输入端口获取输入，并在网络的输出端口将输出排队，从而将缓存/内存控制器与互连网络本身连接在一起。</p>
-<p>sequencer： Sequencer类负责向处理器子系统（包括缓存和片外内存）提供来自处理器的加载/存储/原子内存请求。当每个内存请求由内存子系统完成时，也会通过定序器将响应发送回处理器。系统中模拟的每个硬件线程（或内核）都有一个定序器</p>
-<p>Replacement Policies： LRU 和 Pseudo-LRU</p>
-<p>TOPAZ -该模拟器已准备好在gem5中运行，并在原始的ruby网络模拟器上添加了大量功能。</p>
+<h1 id="高等数学"><a href="#高等数学" class="headerlink" title="高等数学"></a>高等数学</h1><h3 id="直角坐标系-gt-极坐标系"><a href="#直角坐标系-gt-极坐标系" class="headerlink" title="直角坐标系=&gt;极坐标系"></a>直角坐标系=&gt;极坐标系</h3><p>在直角坐标系变换到极坐标系时, $dxdy=\rho d \rho d \theta $ 这样的原因可以用两种方式解释</p>
+<h4 id="面积法"><a href="#面积法" class="headerlink" title="面积法"></a>面积法</h4><p>两者实际上都是表示围成区域的面积, dxdy 长乘宽很好理解,在极坐标系下是两块扇形面积之差(无图)</p>
+<img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/fanshaped.png" class="" title="fanshaped">
+<p>$$<br>S = \frac 1 2 (\rho+d\rho)^2d\theta - \frac 1 2 \rho^2d\theta=\frac 1 2(d\rho)^2+\rho d\rho d\theta \because (d\rho)^2高阶无穷小,省略<br>$$</p>
+<h4 id="代数法"><a href="#代数法" class="headerlink" title="代数法"></a>代数法</h4><p>两者的变换可以用一个行列式表示<br>$$<br>\frac{dxdy}{d\rho d\theta}=|\frac{\partial(x,y)}{\partial(\rho,\theta)}|=\begin{vmatrix}<br>cos\theta &amp;-\rho sin\theta \<br>sin\theta &amp;\rho cos\theta  \<br>\end{vmatrix} = \rho<br>$$</p>
+<h3 id="平面曲线的弧长"><a href="#平面曲线的弧长" class="headerlink" title="平面曲线的弧长"></a>平面曲线的弧长</h3><p>$$<br>\because \frac{dy}{dx}=y’_x \<br>ds =\sqrt{(dx)^2+(dy)^2}=\sqrt{1+(y_x’)^2}dx<br>$$</p>
+<h3 id="第一型曲面积分"><a href="#第一型曲面积分" class="headerlink" title="第一型曲面积分"></a>第一型曲面积分</h3><img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/2.jpg" class="" width="2">
 
+<p>其中面积微元dS的表达式计算方法为：<br>$$<br>dS=cos\theta dxdy<br>$$<br>其中$\theta$ 为当前曲面法线和z轴的夹角<br>$$<br>\overrightarrow{n}={-g_x,-g_y,1} , \overrightarrow{k}={ 0,0,1}\<br>\frac 1 {cos\theta} = \frac{|n||k|}{\overrightarrow{n}·\overrightarrow{k}}=\sqrt{1+g_x^2+g_y^2}<br>$$<br>得到关系带入即可</p>
+<h1 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h1><h1 id="概率论"><a href="#概率论" class="headerlink" title="概率论"></a>概率论</h1>
                 
             </div>
             <hr/>
@@ -530,7 +509,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dingiso.github.io/2021/01/13/Gem5%20%E6%BC%94%E8%AE%B2%E7%A8%BF/">https://dingiso.github.io/2021/01/13/Gem5%20%E6%BC%94%E8%AE%B2%E7%A8%BF/</a>
+                    <a href="https://dingiso.github.io/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">https://dingiso.github.io/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -568,16 +547,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/sim/">
-                                    <span class="chip bg-color">sim</span>
-                                </a>
-                            
-                                <a href="/tags/gem5/">
-                                    <span class="chip bg-color">gem5</span>
-                                </a>
-                            
-                                <a href="/tags/risc-v/">
-                                    <span class="chip bg-color">risc-v</span>
+                                <a href="/tags/Math/">
+                                    <span class="chip bg-color">Math</span>
                                 </a>
                             
                         </div>
@@ -749,29 +720,30 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
-                <a href="/2021/02/01/hello-world/">
+                <a href="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="Up to Date">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="数学一思想">
                         
-                        <span class="card-title">Up to Date</span>
+                        <span class="card-title">数学一思想</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            本篇文章主要记录数学一中学习过程中迸发的思想
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-02-01
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-14
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -779,6 +751,15 @@
                             
                         </span>
                     </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Math/">
+                        <span class="chip bg-color">Math</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -790,25 +771,24 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/12/30/Wannacry%20%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90/">
+                <a href="/2021/05/20/%E4%BF%AE%E6%94%B9%E7%BD%91%E5%8D%A1%E5%9C%B0%E5%9F%9F%E9%99%90%E5%88%B6/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="WannaCry 的具体的细节的分析">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="修改网卡地域限制">
                         
-                        <span class="card-title">WannaCry 的具体的细节的分析</span>
+                        <span class="card-title">修改网卡地域限制</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本文是针对WannaCry 的具体的细节的分析
-REFERENCE
+                            本文主要介绍了在构建路由器时为了破解地域限制的选路机制的相关工作、
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-12-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-20
                             </span>
                         <span class="publish-author">
                             
@@ -821,12 +801,8 @@ REFERENCE
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/network/">
-                        <span class="chip bg-color">network</span>
-                    </a>
-                    
-                    <a href="/tags/virus/">
-                        <span class="chip bg-color">virus</span>
+                    <a href="/tags/WIFI/">
+                        <span class="chip bg-color">WIFI</span>
                     </a>
                     
                 </div>
@@ -957,6 +933,13 @@ REFERENCE
 
 </main>
 
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
 
 
 
