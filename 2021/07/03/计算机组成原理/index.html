@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="数学一思想, good">
+    <meta name="keywords" content="计算机组成原理, good">
     <meta name="description" content="Dingisoul&#39;s blog">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>数学一思想 | Dingisoul</title>
+    <title>计算机组成原理 | Dingisoul</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">数学一思想</h1>
+                    <h1 class="description center-align post-title">计算机组成原理</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Math/">
-                                <span class="chip bg-color">Math</span>
+                            <a href="/tags/408/">
+                                <span class="chip bg-color">408</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-06-14
+                    2021-07-03
                 </div>
                 
 
@@ -471,35 +471,25 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>本篇文章主要记录数学一中学习过程中迸发的思想</p>
+                <p>本文是对 408 计算机组成原理的复习思考</p>
 <a id="more"></a>
 
-<h1 id="高等数学"><a href="#高等数学" class="headerlink" title="高等数学"></a>高等数学</h1><h3 id="直角坐标系-gt-极坐标系"><a href="#直角坐标系-gt-极坐标系" class="headerlink" title="直角坐标系=&gt;极坐标系"></a>直角坐标系=&gt;极坐标系</h3><p>在直角坐标系变换到极坐标系时, $dxdy=\rho d \rho d \theta $ 这样的原因可以用两种方式解释</p>
-<h4 id="面积法"><a href="#面积法" class="headerlink" title="面积法"></a>面积法</h4><p>两者实际上都是表示围成区域的面积, dxdy 长乘宽很好理解,在极坐标系下是两块扇形面积之差(无图)</p>
-<img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/fanshaped.png" class="" title="fanshaped">
-<p>$$<br>S = \frac 1 2 (\rho+d\rho)^2d\theta - \frac 1 2 \rho^2d\theta=\frac 1 2(d\rho)^2+\rho d\rho d\theta \because (d\rho)^2高阶无穷小,省略<br>$$</p>
-<h4 id="代数法"><a href="#代数法" class="headerlink" title="代数法"></a>代数法</h4><p>两者的变换可以用一个行列式表示<br>$$<br>\frac{dxdy}{d\rho d\theta}=|\frac{\partial(x,y)}{\partial(\rho,\theta)}|=\begin{vmatrix}<br>cos\theta &amp;-\rho sin\theta \<br>sin\theta &amp;\rho cos\theta  \<br>\end{vmatrix} = \rho<br>$$</p>
-<h3 id="平面曲线的弧长"><a href="#平面曲线的弧长" class="headerlink" title="平面曲线的弧长"></a>平面曲线的弧长</h3><p>$$<br>\because \frac{dy}{dx}=y’_x \<br>ds =\sqrt{(dx)^2+(dy)^2}=\sqrt{1+(y_x’)^2}dx<br>$$</p>
-<h3 id="第一型曲面积分"><a href="#第一型曲面积分" class="headerlink" title="第一型曲面积分"></a>第一型曲面积分</h3><img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/2.jpg" class="" width="2">
-
-<p>其中面积微元dS的表达式计算方法为：<br>$$<br>dS=cos\theta dxdy<br>$$<br>其中$\theta$ 为当前曲面法线和z轴的夹角<br>$$<br>\overrightarrow{n}={-g_x,-g_y,1} , \overrightarrow{k}={ 0,0,1}\<br>\frac 1 {cos\theta} = \frac{|n||k|}{\overrightarrow{n}·\overrightarrow{k}}=\sqrt{1+g_x^2+g_y^2}<br>$$<br>得到关系带入即可</p>
-<h1 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h1><p>我觉得线性代数是一门很讲究 <strong>构造</strong> 的学科，很多定理包括其本身都是为了解决描述问题而构造出来的</p>
-<h4 id="行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零"><a href="#行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零" class="headerlink" title="行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零"></a>行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零</h4><p>相当于强行构造出线性相关(相等)的一行/列</p>
-<h4 id="不平行向量可以表示任意"><a href="#不平行向量可以表示任意" class="headerlink" title="不平行向量可以表示任意"></a>不平行向量可以表示任意</h4><p>假设2*2的矩阵表示的，如果两个向量不成比例那么他们的线性组合可以表示二维平面任意向量<br>$$<br>{ 2x-y =a \<br>-x+2y = b }  =&gt; y= (a+2b)/3 \ 所以给定任意ab一定能求出y<br>$$</p>
-<h4 id="秩"><a href="#秩" class="headerlink" title="秩"></a>秩</h4><p>矩阵的秩的概念，若存在k阶子式不为零，而任意k+1阶子式全为零，则r(A)=k</p>
-<p>私己觉得主要的重点在于两点 </p>
-<ul>
-<li><p><strong>子式</strong>，即k阶行列式是否为零代表行列式中是否有线性相关的向量</p>
-</li>
-<li><p>存在：因为行列式是方的，防止从行上可能选的相关的向量0，从列上某些向量的一部分可能相关，但肯定有不相关的，所以用<strong>存在</strong>。而k+1 阶时，因为只有k个线性无关向量，必选到相关的，肯定为0</p>
-</li>
+<h3 id="海明码"><a href="#海明码" class="headerlink" title="海明码"></a>海明码</h3><ul>
+<li>为什么校验位要放在$2^{i-1}$的这些位呢= 使原信息位D变成H时，二进制中1的分布更加均匀便于奇偶校验，而且其实P和他代表的位是一组的，所以他也要在$2^{i-1}$上，更有趣的我们将在下面提到</li>
+<li>校验位是如何起到作用的 - 一个数所在的位只有0/1两种情况，校验位表示是否是1，通过多个校验位就能表示是哪一位出了问题 比如：假设P1,P2,P3都出了问题，那么出现问题的位数就是0b111即H7，<strong>更有趣的是</strong>如果P2出了问题，P1P3没有，那么0b010代表了H2即P1本身有问题，符合<strong>整体性</strong>。 </li>
 </ul>
-<h3 id=""><a href="#" class="headerlink" title=""></a></h3><blockquote>
-<p> 注：相关的意思为 向量集 中的一个向量能用其他向量线性表示 ，而非只是简单的成比例</p>
-</blockquote>
-<h3 id="为什么行秩-列秩"><a href="#为什么行秩-列秩" class="headerlink" title="为什么行秩=列秩"></a>为什么行秩=列秩</h3><h4 id="行与列"><a href="#行与列" class="headerlink" title="行与列"></a>行与列</h4><p>行列式的行与列，矩阵的行与列</p>
-<h3 id="当-r-A-n-1-时-r-A-1-n为A的列"><a href="#当-r-A-n-1-时-r-A-1-n为A的列" class="headerlink" title="当 r(A) = n-1 时 r(A*) = 1 (n为A的列)"></a>当 r(A) = n-1 时 r(A*) = 1 (n为A的列)</h3><p>$$<br>\because r(A)=n-1<br>$$</p>
-<h1 id="概率论"><a href="#概率论" class="headerlink" title="概率论"></a>概率论</h1>
+<h3 id="移位操作"><a href="#移位操作" class="headerlink" title="移位操作"></a>移位操作</h3><p>王道课程所举的 RGB 的例子改成从3B的数据中提取每个RGB的值比较好，这样可以很好的用到左移和右移都填0的操作，我觉得更巧妙</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token comment">// 3B = R+G+B</span>
+R <span class="token operator">=</span> <span class="token number">3</span>B <span class="token operator">>></span> <span class="token number">16</span>
+G <span class="token operator">=</span> <span class="token number">3</span>B <span class="token operator">&lt;&lt;</span>  <span class="token number">8</span> <span class="token operator">>></span> <span class="token number">16</span>
+B <span class="token operator">=</span> <span class="token number">3</span>B <span class="token operator">&lt;&lt;</span> <span class="token number">16</span> <span class="token operator">>></span> <span class="token number">16</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>为什么不能用移码进行运算？</p>
+<p>例： 移码相当于把所有数都移到正数区间 ，比如两个负数相加是个更小的负数而移码所出来会变成一个更大的数，没有统一性 - 本质上是不能实现减法即表示负数。 用补码就可以</p>
+<div class="mxgraph" style="max-width:100%;border:1px solid transparent;" data-mxgraph="{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;toolbar&quot;:&quot;zoom layers lightbox&quot;,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;&lt;mxfile host=\&quot;Electron\&quot; modified=\&quot;2021-07-03T07:21:00.344Z\&quot; agent=\&quot;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/13.9.9 Chrome/85.0.4183.121 Electron/10.1.5 Safari/537.36\&quot; etag=\&quot;C2pxLFh7ktcjbY-TDBmm\&quot; version=\&quot;13.9.9\&quot; type=\&quot;device\&quot;&gt;&lt;diagram id=\&quot;DEw9geDWxp9FeI83x8Im\&quot; name=\&quot;第 1 页\&quot;&gt;7Vldb9owFP01fuxkJ5DAI2F0m6ZNlZg0aW9u4ibWnDh1zNd+/RzifNmglq7ABPAA5sS+ds6599o3Ae40XX8SOE++8Ygw4MBoDdyPwHF86KnvEthUwMDVQCxoVEGoBeb0D9Eg1OiCRqTodZScM0nzPhjyLCOh7GFYCL7qd3virD9rjmNiAfMQMxv9SSOZVOjI8Vv8M6FxUs+MvHF1JcV1Z30nRYIjvupA7gy4U8G5rFrpekpYyV3NSzXufs/VZmGCZPI1A5If6WD8hW8Q/X7/8PyLYPY1vNNWlpgt9A3rxcpNzQDJoklJpPoXMlwUNARukMiUKQCpZjWARBaP7cJQc7vKTQhPiRQb1WXVEjrUJCUdLmtMEIYlXfbNY61r3JhrZnjgVE3sQO2Czkjb0R7oDGDfRMEXIiR6VJdAw5DrvWBIYhETaRlSjc5tt9BWnwO0cm5avVorB55XK/cgrTKekWsVyjTknlaogSUUtJSSZC378hRS8N9kyhkXrXxPlDEDwozGWRmMSjWi8GBJhKRqd5noCymNonKaYJVQSeY5Dss5V2orVZjgiywi5eph4xKlAbI+1Clqsn2D7HqX7TiNs8NpHLjfP3qCHMr+8ApSGoQfYOeD+gqM3ituTENHjhvv8pWz9vt/0OoQFziycr6lXHmy8FiZ4oocZz0RvedFeT4Nnngm74rt6XyiOiCYr9uLqhXr38rKIq8hv8bUUjtwF91OWcOXmnmRGa47Mu/glJl3fE37Hhob7Htn3veQXXfdgvD4xx8zCM/uBnZJ5+zRD6clJdljkRvKtd3qYv4SpXMH/1n+RHaFd5Nud9SZ0u2IutNKZ9d8l8y/FTpnz3q3qg8a3L656jMNHbl2QFdQ9r3I8ZufF59aLLvSAzMfTHwQBNsGBKMLznvIoL8pAs6274x26jGegvE9mA2B8rtgej16NE96z6aHXQOD2QhMEJgMrzA+mofD76+H+tu+56zSW/uy2J39BQ==&lt;/diagram&gt;&lt;/mxfile&gt;&quot;}"></div>
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+
+<p>本质上补码模拟了在原数轴上绝对值的递增方向</p>
+
                 
             </div>
             <hr/>
@@ -525,7 +515,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dingiso.github.io/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">https://dingiso.github.io/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/</a>
+                    <a href="https://dingiso.github.io/2021/07/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">https://dingiso.github.io/2021/07/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -563,8 +553,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Math/">
-                                    <span class="chip bg-color">Math</span>
+                                <a href="/tags/408/">
+                                    <span class="chip bg-color">408</span>
                                 </a>
                             
                         </div>
@@ -736,9 +726,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
                 <a href="/2021/07/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">
                     <div class="card-image">
@@ -756,9 +747,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-07-03
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-07-03
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -767,6 +758,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -785,24 +777,24 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/05/20/%E4%BF%AE%E6%94%B9%E7%BD%91%E5%8D%A1%E5%9C%B0%E5%9F%9F%E9%99%90%E5%88%B6/">
+                <a href="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="修改网卡地域限制">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="数学一思想">
                         
-                        <span class="card-title">修改网卡地域限制</span>
+                        <span class="card-title">数学一思想</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本文主要介绍了在构建路由器时为了破解地域限制的选路机制的相关工作、
+                            本篇文章主要记录数学一中学习过程中迸发的思想
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-14
                             </span>
                         <span class="publish-author">
                             
@@ -815,8 +807,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/WIFI/">
-                        <span class="chip bg-color">WIFI</span>
+                    <a href="/tags/Math/">
+                        <span class="chip bg-color">Math</span>
                     </a>
                     
                 </div>
@@ -947,13 +939,6 @@
 
 </main>
 
-
-<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script>
-    MathJax.Hub.Config({
-        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
-    });
-</script>
 
 
 
