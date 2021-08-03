@@ -475,13 +475,15 @@
 <h4 id="面积法"><a href="#面积法" class="headerlink" title="面积法"></a>面积法</h4><p>两者实际上都是表示围成区域的面积, dxdy 长乘宽很好理解,在极坐标系下是两块扇形面积之差(无图)</p>
 <img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/fanshaped.png" class="" title="fanshaped">
 <p>$$<br>S = \frac 1 2 (\rho+d\rho)^2d\theta - \frac 1 2 \rho^2d\theta=\frac 1 2(d\rho)^2+\rho d\rho d\theta \because (d\rho)^2高阶无穷小,省略<br>$$</p>
-<h4 id="代数法"><a href="#代数法" class="headerlink" title="代数法"></a>代数法</h4><p>两者的变换可以用一个行列式表示<br>$$<br>\frac{dxdy}{d\rho d\theta}=|\frac{\partial(x,y)}{\partial(\rho,\theta)}|=\begin{vmatrix}<br>cos\theta &amp;-\rho sin\theta \<br>sin\theta &amp;\rho cos\theta  \<br>\end{vmatrix} = \rho<br>$$</p>
+<h4 id="代数法"><a href="#代数法" class="headerlink" title="代数法"></a>代数法</h4><p>两者的变换可以用一个行列式表示<br>$$<br>\frac{dxdy}{d\rho d\theta}=|\frac{\partial(x,y)}{\partial(\rho,\theta)}|=\begin{vmatrix}<br>cos\theta &amp;-\rho sin\theta \\<br>sin\theta &amp;\rho cos\theta  \\<br>\end{vmatrix} = \rho<br>$$</p>
 <h3 id="平面曲线的弧长"><a href="#平面曲线的弧长" class="headerlink" title="平面曲线的弧长"></a>平面曲线的弧长</h3><p>$$<br>\because \frac{dy}{dx}=y’_x \<br>ds =\sqrt{(dx)^2+(dy)^2}=\sqrt{1+(y_x’)^2}dx<br>$$</p>
 <h3 id="第一型曲面积分"><a href="#第一型曲面积分" class="headerlink" title="第一型曲面积分"></a>第一型曲面积分</h3><img src="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/2.jpg" class="" width="2">
 
 <p>其中面积微元dS的表达式计算方法为：<br>$$<br>dS=cos\theta dxdy<br>$$<br>其中$\theta$ 为当前曲面法线和z轴的夹角<br>$$<br>\overrightarrow{n}={-g_x,-g_y,1} , \overrightarrow{k}={ 0,0,1}\<br>\frac 1 {cos\theta} = \frac{|n||k|}{\overrightarrow{n}·\overrightarrow{k}}=\sqrt{1+g_x^2+g_y^2}<br>$$<br>得到关系带入即可</p>
 <h1 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h1><p>我觉得线性代数是一门很讲究 <strong>构造</strong> 的学科，很多定理包括其本身都是为了解决描述问题而构造出来的</p>
-<h4 id="行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零"><a href="#行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零" class="headerlink" title="行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零"></a>行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零</h4><p>相当于强行构造出线性相关(相等)的一行/列</p>
+<h3 id="A-AT"><a href="#A-AT" class="headerlink" title="|A| = |AT|"></a>|A| = |AT|</h3><p>简要来说 行列式的绝对值是行列式中不同行不同列元素的乘积，这种关系在转置后不会改变</p>
+<p>他的正负由逆序数决定，同时逆序数也不会随着转置而发生改变（易证），比如： 12 ，24 是正序的，转置后 21 42 仍然正序， 13 ，22是逆序的，转置过后 22 ，31仍然是逆序的。</p>
+<h4 id="行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零"><a href="#行列式的某行-列-元素分别乘另一行-列-元素的代数余子式后再求和，结果为零" class="headerlink" title="行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零"></a>行列式的某行(列)元素分别乘另一行(列)元素的代数余子式后再求和，结果为零</h4><p>相当于强行构造出线性相关(就是相等)的一行/列</p>
 <h4 id="不平行向量可以表示任意"><a href="#不平行向量可以表示任意" class="headerlink" title="不平行向量可以表示任意"></a>不平行向量可以表示任意</h4><p>假设2*2的矩阵表示的，如果两个向量不成比例那么他们的线性组合可以表示二维平面任意向量<br>$$<br>{ 2x-y =a \<br>-x+2y = b }  =&gt; y= (a+2b)/3 \ 所以给定任意ab一定能求出y<br>$$</p>
 <h4 id="秩"><a href="#秩" class="headerlink" title="秩"></a>秩</h4><p>矩阵的秩的概念，若存在k阶子式不为零，而任意k+1阶子式全为零，则r(A)=k</p>
 <p>私己觉得主要的重点在于两点 </p>
@@ -496,7 +498,11 @@
 </blockquote>
 <h3 id="为什么行秩-列秩"><a href="#为什么行秩-列秩" class="headerlink" title="为什么行秩=列秩"></a>为什么行秩=列秩</h3><h4 id="行与列"><a href="#行与列" class="headerlink" title="行与列"></a>行与列</h4><p>行列式的行与列，矩阵的行与列</p>
 <h3 id="当-r-A-n-1-时-r-A-1-n为A的列"><a href="#当-r-A-n-1-时-r-A-1-n为A的列" class="headerlink" title="当 r(A) = n-1 时 r(A*) = 1 (n为A的列)"></a>当 r(A) = n-1 时 r(A*) = 1 (n为A的列)</h3><p>$$<br>\because r(A)=n-1<br>$$</p>
-<h1 id="概率论"><a href="#概率论" class="headerlink" title="概率论"></a>概率论</h1><h1 id="数论"><a href="#数论" class="headerlink" title="数论"></a>数论</h1><h3 id="gcd-a-b-max-k-k-a-amp-k-b"><a href="#gcd-a-b-max-k-k-a-amp-k-b" class="headerlink" title="gcd(a,b) = max [k , k|a &amp; k|b]"></a>gcd(a,b) = max [k , k|a &amp; k|b]</h3><p>$$<br>反证法：假设存在 q&lt;k,满足q|a&amp;q|b \ 那么(qk) 必满足(qk)|a&amp;(qk)|n \<br>k 就不是max了<br>$$</p>
+<h3 id="特征值和特征向量的对应关系"><a href="#特征值和特征向量的对应关系" class="headerlink" title="特征值和特征向量的对应关系"></a>特征值和特征向量的对应关系</h3><p>其实是一对一的，但是对应出的特征向量不一定是线性无关的，所以</p>
+<p>k重特征值至多只有k个线性无关的特征向量</p>
+<h3 id="特征值的性质及其证明"><a href="#特征值的性质及其证明" class="headerlink" title="特征值的性质及其证明"></a>特征值的性质及其证明</h3><p>$$<br>\sum^n_{i=1}\lambda_i = \sum^n_{i=1}a_{ii}; \\<br>\because \lambda^n 和 \lambda^{n-1}  均只能由对角线乘积的那一组得到 \\<br>且系数为\lambda^n+\sum^n_{i=1}a_{ii}\lambda^{n-1} \\<br>\prod_{i=1}^n\lambda_i=|A| \\<br>相似理论,不同行不同列乘积（且正负号两者相同）<br>$$</p>
+<h3 id="求可逆矩阵使得相似对角化"><a href="#求可逆矩阵使得相似对角化" class="headerlink" title="求可逆矩阵使得相似对角化"></a>求可逆矩阵使得相似对角化</h3><p>$$<br>why , p=[\xi_1,\xi_2,…,\xi_n],则 P^{-1}AP=\Lambda 且对角元素为特征值 \\<br>\because p^{-1}=[\frac{\xi_1}{|\xi_1|^2},\frac{\xi_2}{|\xi_2|^2},…,\frac{\xi_n}{|\xi_n|^2}]^T \\<br>AP=[\lambda_1\xi_1,\lambda_2\xi_2,…,\lambda_n\xi_n] \\<br>易得 P^{-1}AP=\Lambda<br>$$</p>
+<h1 id="概率论"><a href="#概率论" class="headerlink" title="概率论"></a>概率论</h1><h1 id="数论"><a href="#数论" class="headerlink" title="数论"></a>数论</h1><h3 id="gcd-a-b-max-k-k-a-amp-k-b"><a href="#gcd-a-b-max-k-k-a-amp-k-b" class="headerlink" title="gcd(a,b) = max [k , k|a &amp; k|b]"></a>gcd(a,b) = max [k , k|a &amp; k|b]</h3><p>$$<br>反证法：假设存在 q&lt;k,满足q|a且q|b \\ 那么(qk) 必满足(qk)|a且(qk)|n \\<br>k 就不是max了<br>$$</p>
 
                 
             </div>
@@ -945,6 +951,13 @@
 
 </main>
 
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
 
 
 
