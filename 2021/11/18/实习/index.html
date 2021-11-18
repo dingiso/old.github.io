@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="修改网卡地域限制, good">
+    <meta name="keywords" content="实习, good">
     <meta name="description" content="Dingisoul&#39;s blog">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>修改网卡地域限制 | Dingisoul</title>
+    <title>实习 | Dingisoul</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -311,12 +311,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/18.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">修改网卡地域限制</h1>
+                    <h1 class="description center-align post-title">实习</h1>
                 </div>
             </div>
         </div>
@@ -430,13 +430,9 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/WIFI/">
-                                <span class="chip bg-color">WIFI</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -448,7 +444,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2021-05-20
+                    2021-11-18
                 </div>
                 
 
@@ -469,187 +465,26 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>本文主要介绍了在构建路由器时为了破解地域限制的选路机制的相关工作、</p>
-<a id="more"></a> 
-<h1 id="破解网卡的-Regulatory-Domain"><a href="#破解网卡的-Regulatory-Domain" class="headerlink" title="破解网卡的 Regulatory Domain"></a>破解网卡的 Regulatory Domain</h1><p>我们网卡的 版本号</p>
-<pre class="line-numbers language-none"><code class="language-none">Network controller: Qualcomm Atheros AR958x 802.11abgn Wireless Network Adapter (rev 01)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>[TOC]</p>
-<h2 id="利用-reghack-修改内核模块"><a href="#利用-reghack-修改内核模块" class="headerlink" title="利用 reghack 修改内核模块"></a>利用 reghack 修改内核模块</h2><blockquote>
-<p>曾经的一个教程</p>
-</blockquote>
-<p>不同的国家和地区有不同的无线电管理规定(Regulatory Domain)，对于ISM 5GHz频段的划分也有不同的准则。</p>
-<p>Regulatory Domian有3大族，以美国为代表的FCC，以欧盟为代表的ETSI，以及日本再一次特立独行的TELEC（无论在蜂窝网还是WLAN，日本一直都是个怪异的存在）。中国采用ETSI规定，具体频段管理与欧盟有所不同。</p>
-<p>无线网卡驱动根据ISO-3166 alpha2规定的国家代码（如美国US，中国CN，德国DE，韩国KR，日本JP），对网卡的工作频率进行管理。</p>
-<p>高通Atheros在网卡驱动的公共部分加入了Regulatory Doamin管理的功能。针对销往不同国家的网卡产品，通过直接在网卡芯片的可擦写存储器（EEPROM）中写入相应的国家代码，驱动工作时读取该代码并开启相应的工作频段。</p>
-<p>由于项目的需求，我们买了几张Atheros 958x系列的无线网卡，支持2.4/5GHz双频段，但是很遗憾的是这批网卡5GHz的中间一段不被支持。国家代码可以通过下列命令察看。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">dmesg</span> <span class="token operator">|</span> <span class="token function">grep</span> ath
-$ iwlist chan<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>尽管使用了iw工具来修改linux系统的Regulatory Domain管理部分的国家代码：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ iw reg <span class="token builtin class-name">set</span> US
-$ iw reg get
-$ iwlist chan<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>但是由于EEPROM的限制，被屏蔽的频段总是无法开启。</p>
-<p>为了开启尽可能多的5GHz频段，在没有直接修改EEPROM的方法的情况下，我只能修改破解驱动中关于频段管理的部分。Google 到<a target="_blank" rel="noopener" href="https://github.com/Luminger/reghack">reghack及其源代码</a>，并进行重新编译</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">root@linux: gcc reghack.c -o reghack<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果没有gcc 这样安装</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> build-essential<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>安装的Ubuntu 12.04.4系统是linux 3.11内核，linux 3.7 内核开始加入了模块签名及验证机制。下面的破解过程虽然顺利进行，但重启之后破解的无线模块cfg80211.ko和ath.ko无法加载，网卡不能驱动。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">root@linux:/home/user<span class="token comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/net/wireless/cfg80211.ko </span>
-Patching @ 0x0004cf30: core world6 regdomain <span class="token keyword">in</span> cfg80211/reg.o
-root@linux:/home/user<span class="token comment"># ./reghack /lib/modules/3.11.0-15-generic/kernel/drivers/net/wireless/ath/ath.ko </span>
-Patching @ 0x00002110: ath world regdomain with <span class="token number">5</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x000021a0: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00002220: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00002280: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x000022e0: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h4 id="降回到linux-3-2内核"><a href="#降回到linux-3-2内核" class="headerlink" title="降回到linux 3.2内核"></a>降回到linux 3.2内核</h4><p>如果你的内核版本默认就是低于3.7内核，就无需进行此操作。内核版本察看命令 <code>uname -a</code>,使用如下命令 <code>sudo apt-get install linux-image</code> 将linux 3.2内核及源码等自动下载安装。重启选择<code>Prevous Linux Versions</code>进入，然后选择启用3.2内核。为了安全起见，先进行备份处理。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">user@linux:~$ gcc reghack.c -o reghack
-user@linux:~$ <span class="token function">sudo</span> <span class="token function">cp</span> /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko.backup
-user@linux:~$ <span class="token function">sudo</span> <span class="token function">cp</span> /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko.backup
-user@linux:~$ <span class="token function">sudo</span> ./reghack /lib/modules/3.2.0-60-generic/kernel/drivers/net/wireless/ath/ath.ko
-Patching @ 0x00001e10: ath world regdomain with <span class="token number">5</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00001e90: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00001ef8: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00001f48: ath world regdomain with <span class="token number">3</span> rules <span class="token keyword">in</span> ath/regd.o
-Patching @ 0x00001f98: ath world regdomain with <span class="token number">4</span> rules <span class="token keyword">in</span> ath/regd.o
-user@linux:~$ <span class="token function">sudo</span> ./reghack /lib/modules/3.2.0-60-generic/kernel/net/wireless/cfg80211.ko
-Patching @ 0x00022c60: core world5 regdomain <span class="token keyword">in</span> cfg80211/reg.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>破解后的频段见如下：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">wlan0     <span class="token number">32</span> channels <span class="token keyword">in</span> total<span class="token punctuation">;</span> available frequencies <span class="token builtin class-name">:</span>
-          Channel 01 <span class="token builtin class-name">:</span> <span class="token number">2.412</span> GHz
-          Channel 02 <span class="token builtin class-name">:</span> <span class="token number">2.417</span> GHz
-          Channel 03 <span class="token builtin class-name">:</span> <span class="token number">2.422</span> GHz
-          Channel 04 <span class="token builtin class-name">:</span> <span class="token number">2.427</span> GHz
-          Channel 05 <span class="token builtin class-name">:</span> <span class="token number">2.432</span> GHz
-          Channel 06 <span class="token builtin class-name">:</span> <span class="token number">2.437</span> GHz
-          Channel 07 <span class="token builtin class-name">:</span> <span class="token number">2.442</span> GHz
-          Channel 08 <span class="token builtin class-name">:</span> <span class="token number">2.447</span> GHz
-          Channel 09 <span class="token builtin class-name">:</span> <span class="token number">2.452</span> GHz
-          Channel <span class="token number">10</span> <span class="token builtin class-name">:</span> <span class="token number">2.457</span> GHz
-          Channel <span class="token number">11</span> <span class="token builtin class-name">:</span> <span class="token number">2.462</span> GHz
-          Channel <span class="token number">36</span> <span class="token builtin class-name">:</span> <span class="token number">5.18</span> GHz
-          Channel <span class="token number">40</span> <span class="token builtin class-name">:</span> <span class="token number">5.2</span> GHz
-          Channel <span class="token number">44</span> <span class="token builtin class-name">:</span> <span class="token number">5.22</span> GHz
-          Channel <span class="token number">48</span> <span class="token builtin class-name">:</span> <span class="token number">5.24</span> GHz
-          Channel <span class="token number">52</span> <span class="token builtin class-name">:</span> <span class="token number">5.26</span> GHz
-          Channel <span class="token number">56</span> <span class="token builtin class-name">:</span> <span class="token number">5.28</span> GHz
-          Channel <span class="token number">60</span> <span class="token builtin class-name">:</span> <span class="token number">5.3</span> GHz
-          Channel <span class="token number">64</span> <span class="token builtin class-name">:</span> <span class="token number">5.32</span> GHz
-          Channel <span class="token number">100</span> <span class="token builtin class-name">:</span> <span class="token number">5.5</span> GHz
-          Channel <span class="token number">104</span> <span class="token builtin class-name">:</span> <span class="token number">5.52</span> GHz
-          Channel <span class="token number">108</span> <span class="token builtin class-name">:</span> <span class="token number">5.54</span> GHz
-          Channel <span class="token number">112</span> <span class="token builtin class-name">:</span> <span class="token number">5.56</span> GHz
-          Channel <span class="token number">116</span> <span class="token builtin class-name">:</span> <span class="token number">5.58</span> GHz
-          Channel <span class="token number">132</span> <span class="token builtin class-name">:</span> <span class="token number">5.66</span> GHz
-          Channel <span class="token number">136</span> <span class="token builtin class-name">:</span> <span class="token number">5.68</span> GHz
-          Channel <span class="token number">140</span> <span class="token builtin class-name">:</span> <span class="token number">5.7</span> GHz
-          Channel <span class="token number">149</span> <span class="token builtin class-name">:</span> <span class="token number">5.745</span> GHz
-          Channel <span class="token number">153</span> <span class="token builtin class-name">:</span> <span class="token number">5.765</span> GHz
-          Channel <span class="token number">157</span> <span class="token builtin class-name">:</span> <span class="token number">5.785</span> GHz
-          Channel <span class="token number">161</span> <span class="token builtin class-name">:</span> <span class="token number">5.805</span> GHz
-          Channel <span class="token number">165</span> <span class="token builtin class-name">:</span> <span class="token number">5.825</span> GHz
-          Current Frequency:2.437 GHz <span class="token punctuation">(</span>Channel <span class="token number">6</span><span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="编译内核模块"><a href="#编译内核模块" class="headerlink" title="编译内核模块"></a>编译内核模块</h2><p>linux内核从3.7 开始加入模块签名检查机制，如果内核选项CONFIG_MODULE_SIG和CONFIG_MODULE_SIG_FORCE打开的话，当加载模块时内核会检查模块的签名，如果签名不存在或者签名内容不一致，会强制退出模块的加载。所以为模块签名就尤为重要。如果是内核选项CONFIG_MODULE_SIG_ALL打开，内核编译模块时会自动为模块签名。否则就要自己对模块签名。</p>
-<p>首先我们就要想到用什么签名工具，因为签名机制从3.7 内核才加入，所以为模块签名的资料少之又少，我找了很长时间也没有头绪，网上说的最多的都是openssl来做签名。所以理所当然的我也使用openssl来做签名，但是它是linux内核之外的工具，就算生成签名，你还要手动添加到模块.ko文件最后，还要设置一些内核要检查的固定结构体(例如：signature_module结构)，很是麻烦，并且内核的key你拿不到，用的不是内核的可以签名肯定通不过检查。所以这种方法至少我认为不可行。</p>
-<p>有一篇英文资料比较好</p>
-<h3 id="Signed-kernel-module-support"><a href="#Signed-kernel-module-support" class="headerlink" title="Signed kernel module support"></a>Signed kernel module support</h3><p>From Gentoo Wiki</p>
-<p>Jump to: <a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#mw-navigation">navigation</a>, <a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#p-search">search</a></p>
-<p>Since Linux kernel version 3.7 onwards, support has been added for signed kernel modules. When enabled, the Linux kernel will only load kernel modules that are digitally signed with the proper key. This allows further hardening of the system by disallowing unsigned kernel modules, or kernel modules signed with the wrong key, to be loaded. Malicious kernel modules are a common method for loading rootkits on a Linux system.</p>
-<p>Contents [<a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#">hide</a>] <a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Enabling_module_signature_verification">1 Enabling module signature verification</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Configuring_module_signature_verification">1.1 Configuring module signature verification</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Building_the_kernel_with_proper_keys">1.2 Building the kernel with proper keys</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Validating_module_signature_support">1.3 Validating module signature support</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Administering_kernel_module_signatures">2 Administering kernel module signatures</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Protecting_the_private_key">2.1 Protecting the private key</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Manually_signing_modules">2.2 Manually signing modules</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#Distributing_the_kernel_and_modules">2.3 Distributing the kernel and modules</a><a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#More_resources">3 More resources</a></p>
-<h3 id="Enabling-module-signature-verification"><a href="#Enabling-module-signature-verification" class="headerlink" title="Enabling module signature verification"></a>Enabling module signature verification</h3><p>Enabling support is a matter of toggling a few settings in the Linux kernel configuration. Unless you want to use your own keypair, this is all that has to be done to enable kernel module support.</p>
-<h4 id="Configuring-module-signature-verification"><a href="#Configuring-module-signature-verification" class="headerlink" title="Configuring module signature verification"></a>Configuring module signature verification</h4><p>Module signature verification is a kernel feature, so has to be enabled through the Linux kernel configuration. You can find the necessary options under Enable loadable module support.</p>
-<p> [<a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#">Collapse</a>] </p>
-<p>Kernel configuration Enable module signature verification</p>
-<pre class="line-numbers language-none"><code class="language-none">--- Enable loadable module support
-[*]   Module signature verification
-[*]     Require modules to be validly signed
-[*]     Automatically sign all modules
-      Which hash algorithm should modules be signed with? (Sign modules with SHA-512) ---&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>The option Module signature verification (CONFIG_MODULE_SIG) enables the module signature verification in the Linux kernel. It supports two approaches on signed module support: a rather permissive one and a strict one. By default, the permissive approach is used, which means that the Linux kernel module either has to have a valid signature, or no signature. With the strict approach, a valid signature must be present. In the above example, the strict approach is used by selecting Require modules to be validly signed (CONFIG_MODULE_SIG_FORCE). Another way of enabling this strict approach is to set the kernel boot option enforcemodulesig=1.</p>
-<p>When building the Linux kernel, the kernel modules will not be signed automatically unless you select Automatically sign all modules(CONFIG_MODULE_SIG_ALL).</p>
-<p>Finally, we need to select the hash algorithm to use with the cryptographic signature. In the above example, we use SHA-512.</p>
-<h4 id="Building-the-kernel-with-proper-keys"><a href="#Building-the-kernel-with-proper-keys" class="headerlink" title="Building the kernel with proper keys"></a>Building the kernel with proper keys</h4><p>When the Linux kernel is building with module signature verification support enabled, then you can use your own keys or have the Linux kernel build infrastructure create a set for you. If you want the Linux kernel build infrastructure to create it for you, just continue as you always do with a make and make modules_install. At the end of the build process, you will notice that signing_key.priv and signing_key.x509 will be available on the root of the Linux kernel sources.</p>
-<p>If we want to use our own keys, you can use openssl to create a key pair (private key and public key). The following command, taken from kernel/Makefile, creates such a key pair.</p>
-<p> [<a target="_blank" rel="noopener" href="http://wiki.gentoo.org/wiki/Signed_kernel_module_support#">Collapse</a>] </p>
-<p>File x509.genkey Key generation configuration file</p>
-<pre class="line-numbers language-none"><code class="language-none">[ req ]
-default_bits &#x3D; 4096
-distinguished_name &#x3D; req_distinguished_name
-prompt &#x3D; no
-string_mask &#x3D; utf8only
-x509_extensions &#x3D; myexts
-  
-[ req_distinguished_name ]
-O &#x3D; GenFic
-CN &#x3D; Kernel Signing Key
-emailAddress &#x3D; server.support@genfic.com
-  
-[ myexts ]
-basicConstraints&#x3D;critical,CA:FALSE
-keyUsage&#x3D;digitalSignature
-subjectKeyIdentifier&#x3D;hash
-authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>user $</strong> openssl req -new -nodes -utf8 -sha512 -days 36500 -batch -x509 -config x509.genkey -outform DER -out signing_key.x509 -keyout signing_key.priv</p>
-<p>The resulting files need to be stored as signing_key.x509 and signing_key.priv in the root of the Linux kernel source tree.</p>
-<p>The public key part will be build inside the Linux kernel. If you configured the kernel to sign modules, this signing will take place during the make modules_install part.</p>
-<h4 id="Validating-module-signature-support"><a href="#Validating-module-signature-support" class="headerlink" title="Validating module signature support"></a>Validating module signature support</h4><p>Reboot with the newly configured kernel. In the output of dmesg you should be able to confirm that the proper certificate is loaded:</p>
-<p><strong>user $</strong> dmesg | grep MODSIGN</p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">[    2.450021] MODSIGN: Loaded cert &#39;GenFic: Kernel Signing Key: b923a5f44eae25bbad52c8bf2742e7b7e6fb0c0e&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>The kernel modules have the digital signature appended at the end. A simple hexdump can confirm if a signature is present or not:</p>
-<p><strong>user $</strong> hexdump -C vxlan.ko | tail</p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">00008880  cf 0e e7 cb 10 9e 98 5f  4b 21 d4 03 ba 3d 7e e7  |......._K!...&#x3D;~.|
-00008890  68 db f9 e3 5f 62 3c c7  d6 6c 84 c7 d6 68 c1 73  |h..._b&lt;..l...h.s|
-000088a0  3d d7 5a 38 66 99 12 b8  84 c9 84 45 dd 68 6d 17  |&#x3D;.Z8f......E.hm.|
-000088b0  03 24 dc 9c 6f 6d 11 01  e9 74 82 ea b5 5b 46 07  |.$..om...t...[F.|
-000088c0  fe dd 66 97 1a 33 58 3d  6e d0 ac 03 08 16 73 06  |..f..3X&#x3D;n.....s.|
-000088d0  9f 90 c4 eb b3 82 1d 9f  48 8c 5b 51 01 06 01 1e  |........H.[Q....|
-000088e0  14 00 00 00 00 00 02 02  7e 4d 6f 64 75 6c 65 20  |........~Module |
-000088f0  73 69 67 6e 61 74 75 72  65 20 61 70 70 65 6e 64  |signature append|
-00008900  65 64 7e 0a                                       |ed~.|
-00008904<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>The string <del>Module signature appended</del> at the end confirms that a signature is present. Of course, it does not confirm that the signature is valid or not.</p>
-<p>To remove the signature, we can use the strip command:</p>
-<p><strong>root #</strong> strip –strip-debug vxlan.ko<br><strong>root #</strong> hexdump -C vxlan.ko | tail</p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">00097330  6c 5f 67 65 74 5f 73 74  61 74 73 36 34 00 72 63  |l_get_stats64.rc|
-00097340  75 5f 62 61 72 72 69 65  72 00 5f 72 61 77 5f 73  |u_barrier._raw_s|
-00097350  70 69 6e 5f 75 6e 6c 6f  63 6b 00 72 65 67 69 73  |pin_unlock.regis|
-00097360  74 65 72 5f 70 65 72 6e  65 74 5f 64 65 76 69 63  |ter_pernet_devic|
-00097370  65 00 6b 6d 61 6c 6c 6f  63 5f 63 61 63 68 65 73  |e.kmalloc_caches|
-00097380  00 6e 65 74 64 65 76 5f  69 6e 66 6f 00 6e 65 69  |.netdev_info.nei|
-00097390  67 68 5f 6c 6f 6f 6b 75  70 00 72 65 6c 65 61 73  |gh_lookup.releas|
-000973a0  65 5f 73 6f 63 6b 00 72  65 67 69 73 74 65 72 5f  |e_sock.register_|
-000973b0  6e 65 74 64 65 76 69 63  65 00                    |netdevice.|
-000973ba<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>If we try to load this module now, we get a failure:</p>
-<p><strong>root #</strong> modprobe vxlan</p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">modprobe: ERROR: could not insert &#39;vxlan&#39;: Required key not available<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>This confirms that modules without a signature are not loaded.</p>
-<h3 id="Administering-kernel-module-signatures"><a href="#Administering-kernel-module-signatures" class="headerlink" title="Administering kernel module signatures"></a>Administering kernel module signatures</h3><p>Once the kernel boots and we have validated that the signed kernel module support works, it is important to correctly handle the keys themselves.</p>
-<h4 id="Protecting-the-private-key"><a href="#Protecting-the-private-key" class="headerlink" title="Protecting the private key"></a>Protecting the private key</h4><p>The private key, stored as signing_key.priv, needs to be moved to a secure location (unless you will be creating new keys for new kernels, in which case the file can be removed). Do not keep it at /usr/src/linux on production systems as malware can then easily use this key to sign the malicious kernel modules (such as rootkits) and compromise the system further.</p>
-<h4 id="Manually-signing-modules"><a href="#Manually-signing-modules" class="headerlink" title="Manually signing modules"></a>Manually signing modules</h4><p>If you ever need to manually sign a kernel module, you can use the scripts/sign-file script available in the Linux kernel source tree. It requires four arguments:</p>
-<ol>
-<li>The hash algorithm to use, such as sha512</li>
-<li>The private key location</li>
-<li>The certificate (which includes the public key) location</li>
-<li>The kernel module to sign</li>
+                <p>这里主要讲述我的实习经历和获取的途径</p>
+<h1 id="先验"><a href="#先验" class="headerlink" title="先验"></a>先验</h1><ol>
+<li>实习不是一定要等到大四，只要你想就能在假期开始实习。</li>
+<li>实习不一定要实地，可以线上远程参与</li>
+<li>实习不是经历，而是学习提升的环境，重要在过程</li>
+<li>实习不是赠予，要自己争取并选择喜欢的方向</li>
 </ol>
-<p>In this case, the key pair does not need to be named signing_file.priv and such, nor do they need to be in the root of the Linux kernel source tree location.</p>
-<p><strong>user $</strong> perl /usr/src/linux/scripts/sign-file sha512 /mnt/sdcard/kernel-signkey.priv /mnt/sdcard/kernel-signkey.x509 vxlan.ko</p>
-<h4 id="Distributing-the-kernel-and-modules"><a href="#Distributing-the-kernel-and-modules" class="headerlink" title="Distributing the kernel and modules"></a>Distributing the kernel and modules</h4><p>If we create a kernel package through make tarbz2-pkg, the modules in it will be signed already so we do not need to manually sign them afterwards. The signing keys themselves are not distributed with it.</p>
-<h4 id="More-resources"><a href="#More-resources" class="headerlink" title="More resources"></a>More resources</h4><p>In <a target="_blank" rel="noopener" href="http://www.kroah.com/log/blog/2013/09/02/booting-a-self-signed-linux-kernel/">Booting a self-signed Linux kernel</a> Greg Kroah-Hartman describes how to boot a self-signed Linux kernel from EFI. As having signed kernel module support is only secure if the Linux kernel is trusted, this is an important (and related) feature to work with.</p>
-<p>一个关闭签名的案例：</p>
-<p><img src="https://img-blog.csdn.net/20170308151344817?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZWxpb3Rfc2hhbw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
-<h3 id="面临的问题"><a href="#面临的问题" class="headerlink" title="面临的问题"></a>面临的问题</h3><p>成功率不能保证</p>
-<p>老版本的reghack不确定对新版本的内核模块有用，可能需要了解修改的原理</p>
-<p>内核编译时需要关闭密钥验证机制，是否对安全性有影响</p>
-<h2 id="新的-Reghack"><a href="#新的-Reghack" class="headerlink" title="新的 Reghack"></a>新的 Reghack</h2><p>该方法优点是看起来十分的清晰全面，感觉成功率有保证，缺点是有针对性的是针对wdr4310v1，但高兴的是该路由器的wireless硬件就是Atheros AR9580,<strong>可能</strong>就是一样的，但还是需要自己的<strong>ART</strong> file，且他是基于AR9300的，且LEDE-openwrt好像不支持我们这个硬件。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/tete1030/reghack">仓库地址</a></p>
-<h2 id="更改EEPROM"><a href="#更改EEPROM" class="headerlink" title="更改EEPROM"></a>更改EEPROM</h2><p>利用 <a target="_blank" rel="noopener" href="https://github.com/rsa9000/atheepmgr">atheepmgr</a> 查看EEPROM在linux编译的时候设置了权限 没有办法dump和更改。</p>
+<blockquote>
+<p>Tips: 可以看自己喜欢的实习的岗位的技能要求有方向的提升自己</p>
+</blockquote>
+<h1 id="经历"><a href="#经历" class="headerlink" title="经历"></a>经历</h1><p>我个人的爱好是底层软件相关，所以我的实习经历更多是在我的方向上</p>
+<h3 id="中科院软件所"><a href="#中科院软件所" class="headerlink" title="中科院软件所"></a>中科院软件所</h3><p>PLCT实验室提供，编译器，模拟器等的实习机会，大家可以通过以下网站进行了解</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/339463598">实习信息发布</a>  =》<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/271626256">实习生自我评级</a> =》<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/271625979">面试形式及内容</a></p>
+<h3 id="清华"><a href="#清华" class="headerlink" title="清华"></a>清华</h3><p>如果对操作系统感兴趣,清华大学每年(可能)会举行相应的夏令营,大家可以选择此页面进行关注</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rcore-os/rCore/wiki/os-tutorial-summer-of-code-2020">清华大学OS夏令营</a></p>
+<h3 id="计算所"><a href="#计算所" class="headerlink" title="计算所"></a>计算所</h3><p>计算所的”开源英才”实习计划,面向现在比较火热的芯片开发和底层软件开发(一生一芯和香山了解一下)</p>
+<p><a target="_blank" rel="noopener" href="https://www.aliyundrive.com/s/wGAAEWC7YqV">“开源英才”实习计划</a></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>其实其他的实验室及公司的实习同理,大家只要想就可以迈出属于自己的一大步,每一个实习的要求只要大致满足(或者现在开始努力满足),都是很有机会的</p>
+<h1 id="广告"><a href="#广告" class="headerlink" title="广告"></a>广告</h1><p>网络与开源软件协会为大家构建了课程指南和教辅材料的仓库,大家可以访问下载和参考</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/NAOSI-DLUT/DLUT_SE_Courses">Github仓库</a>   <a target="_blank" rel="noopener" href="https://file.dingisoul.cn/">文件下载服务器</a>  <a target="_blank" rel="noopener" href="https://naosi-dlut.github.io/DLUT_SE_Courses/">课程指南</a></p>
 
                 
             </div>
@@ -676,7 +511,7 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dingiso.github.io/2021/05/20/%E4%BF%AE%E6%94%B9%E7%BD%91%E5%8D%A1%E5%9C%B0%E5%9F%9F%E9%99%90%E5%88%B6/">https://dingiso.github.io/2021/05/20/%E4%BF%AE%E6%94%B9%E7%BD%91%E5%8D%A1%E5%9C%B0%E5%9F%9F%E9%99%90%E5%88%B6/</a>
+                    <a href="https://dingiso.github.io/2021/11/18/%E5%AE%9E%E4%B9%A0/">https://dingiso.github.io/2021/11/18/%E5%AE%9E%E4%B9%A0/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -713,11 +548,7 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/WIFI/">
-                                    <span class="chip bg-color">WIFI</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -905,29 +736,30 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2021/06/14/%E6%95%B0%E5%AD%A6%E4%B8%80%E6%80%9D%E6%83%B3/">
+                <a href="/2021/11/18/%E5%AE%9E%E4%B9%A0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="数学一思想">
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="实习">
                         
-                        <span class="card-title">数学一思想</span>
+                        <span class="card-title">实习</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本篇文章主要记录数学一中学习过程中迸发的思想
+                            
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-06-14
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-18
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -936,14 +768,7 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
                         </span>
                     </div>
                 </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/Math/">
-                        <span class="chip bg-color">Math</span>
-                    </a>
-                    
-                </div>
+
                 
             </div>
         </div>
@@ -954,25 +779,24 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/03/20/Transmission/">
+                <a href="/2021/10/04/PWN/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="privacy-preserving deep-learning via weight Transmission">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="PWN">
                         
-                        <span class="card-title">privacy-preserving deep-learning via weight Transmission</span>
+                        <span class="card-title">PWN</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本文针对《Privacy-Preserving Deep Learning via Weight Transmission》该篇论文进行了分析
-比较全面 
+                            
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-03-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-04
                             </span>
                         <span class="publish-author">
                             
@@ -981,14 +805,6 @@ authorityKeyIdentifier&#x3D;keyid<span aria-hidden="true" class="line-numbers-ro
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/privacy-preserving/">
-                        <span class="chip bg-color">privacy-preserving</span>
-                    </a>
-                    
                 </div>
                 
             </div>
